@@ -21,13 +21,9 @@ const baseSpeed = 3;
 
 declare global {
     interface Window {
-      TelegramGameProxy?: {
-        submitScore: (score: number) => void;
-        close: () => void;
-      };
+      Telegram: any;
     }
   }
-  export {};
 
 interface Bird {
   x: number;
@@ -64,11 +60,34 @@ const FlappyPepe: React.FC = () => {
 
 
   useEffect(() => {
-    if (typeof window !== "undefined" && window.TelegramGameProxy) {
-      setIsTelegram(true); // Set isTelegram to true if running in Telegram
+    if (typeof window !== "undefined" && window.Telegram && window.Telegram.WebApp) {
+      console.log('Running inside Telegram, showing share button.');
+      setIsTelegram(true); // Set state to true if Telegram API is available
+    } else {
+      console.log('Not running in Telegram, hiding share button.');
     }
   }, []);
   
+
+
+  const submitScoreToTelegram = (score: number) => {
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.Game) {
+      window.Telegram.WebApp.Game.setScore(score, () => {
+        console.log('Score submitted to Telegram:', score);
+      });
+    } else {
+      console.log('Not running in Telegram, skipping score submission.');
+    }
+  };
+
+  // Safe function to close the game
+  const closeGameInTelegram = () => {
+    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.Game) {
+      window.Telegram.WebApp.Game.close();
+    } else {
+      console.log('Not running in Telegram, skipping game close.');
+    }
+  };
 
 
   const jumpSound = new Howl({
@@ -264,22 +283,7 @@ const FlappyPepe: React.FC = () => {
 // Extend the Window interface to include TelegramGameProxy
 
   
-  const submitScoreToTelegram = (score: number) => {
-    if (window.TelegramGameProxy) {
-      window.TelegramGameProxy.submitScore(score); // Submit the score if in Telegram
-    } else {
-      console.log('Not running in Telegram, skipping score submission.');
-    }
-  };
-  
-  // Safe function to close the game
-  const closeGameInTelegram = () => {
-    if (window.TelegramGameProxy) {
-      window.TelegramGameProxy.close(); // Close the game if in Telegram
-    } else {
-      console.log('Not running in Telegram, skipping game close.');
-    }
-  };
+
   
   return (
     <div style={{ textAlign: "center" }}>
