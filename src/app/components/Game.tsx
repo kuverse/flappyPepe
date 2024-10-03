@@ -174,7 +174,7 @@ const FlappyPepe: React.FC = () => {
       }
     }, 16); // Approx 60 FPS
     return () => clearInterval(interval);
-  }, [updateGame, isGameOver]);
+  }, [updateGame, isGameOver, gameStarted]);
 
 
 
