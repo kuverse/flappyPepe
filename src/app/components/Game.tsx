@@ -14,8 +14,6 @@ const hitboxOffsetX = 40; // Offset from the bird's X position to center the hit
 const hitboxOffsetY = 30;
 const PIPE_MIN_HEIGHT = 50; // Minimum height of the top pipe
 const PIPE_MAX_HEIGHT = 300; // Maximum height of the top pipe
-const PIPE_MIN_GAP = 200; // Minimum gap between pipes
-const PIPE_MAX_GAP = 350; 
 const baseSpeed = 3;
 
 interface Bird {
@@ -109,7 +107,7 @@ const FlappyPepe: React.FC = () => {
     } else {
       resetGame();
     }
-  }, [isGameOver, jumpSound, resetGame]);
+  }, [isGameOver]);
 
   const updateGame = useCallback(() => {
     setBird((prevBird) => {
