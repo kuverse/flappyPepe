@@ -47,7 +47,6 @@ const FlappyPepe: React.FC = () => {
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const birdGif = useRef<HTMLImageElement | null>(null); // Use one ref for the bird GIF
-  const [backgroundMusic, setBackgroundMusic] = useState<Howl | null>(null); // For background music
   const currentSpeed = baseSpeed + score * 0.1;
   const [gameStarted, setGameStarted] = useState(false); // Track if the game has started
 
@@ -215,7 +214,6 @@ const FlappyPepe: React.FC = () => {
 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-      // Draw background
       ctx.fillStyle = "#ADD8E6"; // Light blue sky
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
