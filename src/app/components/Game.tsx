@@ -76,14 +76,6 @@ const FlappyPepe: React.FC = () => {
   const [isTelegram, setIsTelegram] = useState(false); // Track if the game is running in Telegram
 
 
-  useEffect(() => {
-    if (typeof window !== "undefined" && window.Telegram && window.Telegram.WebApp) {
-      console.log('Running inside Telegram, showing share button.');
-      setIsTelegram(true); // Set state to true if Telegram API is available
-    } else {
-      console.log('Not running in Telegram, hiding share button.');
-    }
-  }, []);
   
 
 
@@ -319,9 +311,9 @@ const FlappyPepe: React.FC = () => {
               <p>Press Space to Restart</p>
             </div>
             
-            {isTelegram && (<button onClick={() => { submitScoreToTelegram(score);
+            <button onClick={() => { submitScoreToTelegram(score);
               closeGameInTelegram();}}>
-                Exit to Telegram</button>)}
+                Exit to Telegram</button>
             </>
           )}
         </>
