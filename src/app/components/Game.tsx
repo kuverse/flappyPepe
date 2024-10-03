@@ -21,9 +21,26 @@ const baseSpeed = 3;
 
 declare global {
     interface Window {
-      Telegram: any;
+      Telegram: {
+        WebApp: {
+          Game: {
+            setScore: (score: number, callback?: () => void) => void;
+            close: () => void;
+          };
+          initData: string;
+          initDataUnsafe: {
+            user: {
+              id: number;
+              first_name: string;
+              last_name?: string;
+              username?: string;
+            };
+          };
+        };
+      };
     }
   }
+  
 
 interface Bird {
   x: number;
