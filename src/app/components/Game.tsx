@@ -242,7 +242,7 @@ const FlappyPepe: React.FC = () => {
 
   return (
     <div style={{ textAlign: "center" }}>
-      <BackgroundMusic />
+      {gameStarted && (<BackgroundMusic />)}
       <h1 style={{ fontFamily: 'Comic Sans MS', fontSize: '36px', color: 'green', margin: '10px 0' }}>
       FLAPPY BABY PEPE!
     </h1>
