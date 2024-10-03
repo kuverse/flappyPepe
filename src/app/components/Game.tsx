@@ -73,10 +73,7 @@ const FlappyPepe: React.FC = () => {
   const birdGif = useRef<HTMLImageElement | null>(null); // Use one ref for the bird GIF
   const currentSpeed = baseSpeed + score * 0.1;
   const [gameStarted, setGameStarted] = useState(false); // Track if the game has started
-  const [isTelegram, setIsTelegram] = useState(false); // Track if the game is running in Telegram
 
-
-  
 
 
   const submitScoreToTelegram = (score: number) => {
