@@ -31,7 +31,7 @@ interface Pipe {
   color: string;
 }
 
-const FlappyBird: React.FC = () => {
+const FlappyPepe: React.FC = () => {
   const [bird, setBird] = useState<Bird>({ x: 100, y: 250, velocity: 0 });
 
   const generateRandomColor = () => (Math.random() > 0.5 ? "green" : "red");
@@ -109,7 +109,7 @@ const FlappyBird: React.FC = () => {
     } else {
       resetGame();
     }
-  }, [isGameOver]);
+  }, [isGameOver, jumpSound, resetGame]);
 
   const updateGame = useCallback(() => {
     setBird((prevBird) => {
@@ -141,14 +141,6 @@ const FlappyBird: React.FC = () => {
         updatedPipes.shift();
 
         const randomHeight = Math.random() * (PIPE_MAX_HEIGHT - PIPE_MIN_HEIGHT) + PIPE_MIN_HEIGHT;
-    
-        // Generate a random gap (optional)
-        const randomGap = Math.random() * (PIPE_MAX_GAP - PIPE_MIN_GAP) + PIPE_MIN_GAP;
-
-
-        const newPipeX = updatedPipes.length
-          ? updatedPipes[updatedPipes.length - 1].x + PIPE_SPACING
-          : 400; // Default starting position for the new pipe
 
           updatedPipes.push({
             x: updatedPipes.length
@@ -264,4 +256,4 @@ const FlappyBird: React.FC = () => {
   );
 }
 
-export default FlappyBird;
+export default FlappyPepe;
