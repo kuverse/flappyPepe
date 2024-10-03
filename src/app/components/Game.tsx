@@ -19,28 +19,6 @@ const PIPE_MAX_HEIGHT = 300; // Maximum height of the top pipe
 const baseSpeed = 3;
 
 
-declare global {
-    interface Window {
-      Telegram: {
-        WebApp: {
-          Game: {
-            setScore: (score: number, callback?: () => void) => void;
-            close: () => void;
-          };
-          initData: string;
-          initDataUnsafe: {
-            user: {
-              id: number;
-              first_name: string;
-              last_name?: string;
-              username?: string;
-            };
-          };
-        };
-      };
-    }
-  }
-  
 
 interface Bird {
   x: number;
@@ -76,24 +54,6 @@ const FlappyPepe: React.FC = () => {
 
 
 
-  const submitScoreToTelegram = (score: number) => {
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.Game) {
-      window.Telegram.WebApp.Game.setScore(score, () => {
-        console.log('Score submitted to Telegram:', score);
-      });
-    } else {
-      console.log('Not running in Telegram, skipping score submission.');
-    }
-  };
-
-  // Safe function to close the game
-  const closeGameInTelegram = () => {
-    if (window.Telegram && window.Telegram.WebApp && window.Telegram.WebApp.Game) {
-      window.Telegram.WebApp.Game.close();
-    } else {
-      console.log('Not running in Telegram, skipping game close.');
-    }
-  };
 
 
   const jumpSound = new Howl({
@@ -307,10 +267,6 @@ const FlappyPepe: React.FC = () => {
               <p>Final Score: {finalScore}</p>
               <p>Press Space to Restart</p>
             </div>
-            
-            <button onClick={() => { submitScoreToTelegram(score);
-              closeGameInTelegram();}}>
-                Exit to Telegram</button>
             </>
           )}
         </>
