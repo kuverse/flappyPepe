@@ -47,7 +47,8 @@ const FlappyPepe: React.FC = () => {
   const birdGif = useRef<HTMLImageElement | null>(null); // Use one ref for the bird GIF
   const [backgroundMusic, setBackgroundMusic] = useState<Howl | null>(null); // For background music
   const currentSpeed = baseSpeed + score * 0.1;
- 
+  const [gameStarted, setGameStarted] = useState(false); // Track if the game has started
+
   const jumpSound = new Howl({
     src: ["/flap2.wav"], // Path to your jump sound file
     volume: 0.1, // Adjust volume if necessary
@@ -101,13 +102,19 @@ const FlappyPepe: React.FC = () => {
   };
 
   const handleJump = useCallback(() => {
+
+    if (!gameStarted) {
+        setGameStarted(true); // Start the game on first jump
+      }
+
     if (!isGameOver) {
+        
         jumpSound.play();
       setBird((prevBird) => ({ ...prevBird, velocity: JUMP_STRENGTH }));
     } else {
       resetGame();
     }
-  }, [isGameOver]);
+}, [gameStarted, isGameOver, jumpSound, resetGame]);
 
   const updateGame = useCallback(() => {
     setBird((prevBird) => {
@@ -177,23 +184,41 @@ const FlappyPepe: React.FC = () => {
 
   useEffect(() => {
     const interval = setInterval(() => {
-      if (!isGameOver) {
+      if (!isGameOver && gameStarted) {
         updateGame();
       }
     }, 16); // Approx 60 FPS
     return () => clearInterval(interval);
   }, [updateGame, isGameOver]);
 
+
+
+
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === "Space") {
-        handleJump();
+        handleJump(); // Play jump sound and trigger jump on space bar press
       }
     };
-
+  
+    const handleTouchStart = () => {
+      handleJump(); // Trigger jump on touch
+    };
+  
+    // Add event listeners for both keydown and touchstart
     window.addEventListener("keydown", handleKeyDown);
-    return () => window.removeEventListener("keydown", handleKeyDown);
+    window.addEventListener("touchstart", handleTouchStart);
+  
+    return () => {
+      // Clean up event listeners on unmount
+      window.removeEventListener("keydown", handleKeyDown);
+      window.removeEventListener("touchstart", handleTouchStart);
+    };
   }, [handleJump]);
+  
+
+
+
 
   useEffect(() => {
     const canvas = canvasRef.current;
