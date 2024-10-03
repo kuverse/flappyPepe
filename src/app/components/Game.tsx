@@ -64,10 +64,11 @@ const FlappyPepe: React.FC = () => {
 
 
   useEffect(() => {
-    if (window.TelegramGameProxy) {
-      setIsTelegram(true); // Set state to true if TelegramGameProxy is available
+    if (typeof window !== "undefined" && window.TelegramGameProxy) {
+      setIsTelegram(true); // Set isTelegram to true if running in Telegram
     }
   }, []);
+  
 
 
   const jumpSound = new Howl({
