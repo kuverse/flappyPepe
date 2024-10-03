@@ -18,6 +18,17 @@ const PIPE_MIN_HEIGHT = 50; // Minimum height of the top pipe
 const PIPE_MAX_HEIGHT = 300; // Maximum height of the top pipe
 const baseSpeed = 3;
 
+
+declare global {
+    interface Window {
+      TelegramGameProxy?: {
+        submitScore: (score: number) => void;
+        close: () => void;
+      };
+    }
+  }
+  export {};
+
 interface Bird {
   x: number;
   y: number;
@@ -49,6 +60,15 @@ const FlappyPepe: React.FC = () => {
   const birdGif = useRef<HTMLImageElement | null>(null); // Use one ref for the bird GIF
   const currentSpeed = baseSpeed + score * 0.1;
   const [gameStarted, setGameStarted] = useState(false); // Track if the game has started
+  const [isTelegram, setIsTelegram] = useState(false); // Track if the game is running in Telegram
+
+
+  useEffect(() => {
+    if (window.TelegramGameProxy) {
+      setIsTelegram(true); // Set state to true if TelegramGameProxy is available
+    }
+  }, []);
+
 
   const jumpSound = new Howl({
     src: ["/flap2.wav"], // Path to your jump sound file
@@ -155,7 +175,7 @@ const FlappyPepe: React.FC = () => {
           ) {
           setIsGameOver(true);
           gameOverSound.play();
-          setFinalScore(score); // Set final score when game is over
+          setFinalScore(score);
         }
       });
 
@@ -238,6 +258,28 @@ const FlappyPepe: React.FC = () => {
     }
   }, [bird, pipes, isImageLoaded, score]);
 
+
+
+// Extend the Window interface to include TelegramGameProxy
+
+  
+  const submitScoreToTelegram = (score: number) => {
+    if (window.TelegramGameProxy) {
+      window.TelegramGameProxy.submitScore(score); // Submit the score if in Telegram
+    } else {
+      console.log('Not running in Telegram, skipping score submission.');
+    }
+  };
+  
+  // Safe function to close the game
+  const closeGameInTelegram = () => {
+    if (window.TelegramGameProxy) {
+      window.TelegramGameProxy.close(); // Close the game if in Telegram
+    } else {
+      console.log('Not running in Telegram, skipping game close.');
+    }
+  };
+  
   return (
     <div style={{ textAlign: "center" }}>
       {gameStarted && (<BackgroundMusic />)}
@@ -248,12 +290,17 @@ const FlappyPepe: React.FC = () => {
       {isImageLoaded ? ( // Conditionally render the game if the image is loaded
         <>
           <canvas ref={canvasRef} width={400} height={500} style={{ border: "1px solid black" }} />
-          {isGameOver && (
+          {isGameOver && (<>
             <div style={{ textAlign: "center", marginTop: 20 }}>
               <h2>Game Over!</h2>
               <p>Final Score: {finalScore}</p>
               <p>Press Space to Restart</p>
             </div>
+            
+            {isTelegram && (<button onClick={() => { submitScoreToTelegram(score);
+              closeGameInTelegram();}}>
+                Exit to Telegram</button>)}
+            </>
           )}
         </>
       ) : (
