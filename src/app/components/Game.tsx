@@ -1,6 +1,8 @@
 "use client";
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Howl } from "howler"; // Import Howler.js
+import BackgroundMusic from "./Music";
+
 
 const GRAVITY = 0.5;
 const JUMP_STRENGTH = -9;
@@ -59,19 +61,7 @@ const FlappyPepe: React.FC = () => {
     volume: 0.07, // Adjust volume if necessary
   });
 
-  useEffect(() => {
-    const music = new Howl({
-      src: ["/babypepe bonkers.mp3"], 
-      loop: true, // Make sure it loops continuously
-      volume: 0.45, // Set the volume
-    });
-    setBackgroundMusic(music);
-    music.play(); // Start playing the background music
  
-    return () => {
-      music.stop(); // Stop the music when the component unmounts or when game resets
-    };
-  }, []);
 
 
   useEffect(() => {
@@ -92,11 +82,6 @@ const FlappyPepe: React.FC = () => {
     setIsGameOver(false);
     setScore(0); // Reset score when game restarts
     setFinalScore(null);
-
-    if (backgroundMusic) {
-        backgroundMusic.stop();
-        backgroundMusic.play();
-      }
 
   
   };
@@ -257,8 +242,8 @@ const FlappyPepe: React.FC = () => {
 
   return (
     <div style={{ textAlign: "center" }}>
-    {/* Title */}
-    <h1 style={{ fontFamily: 'Comic Sans MS', fontSize: '36px', color: 'green', margin: '10px 0' }}>
+      <BackgroundMusic />
+      <h1 style={{ fontFamily: 'Comic Sans MS', fontSize: '36px', color: 'green', margin: '10px 0' }}>
       FLAPPY BABY PEPE!
     </h1>
     <h2>0x69BABE</h2>
