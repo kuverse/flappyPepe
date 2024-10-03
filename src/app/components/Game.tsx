@@ -2,8 +2,8 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Howl } from "howler"; // Import Howler.js
 
-const GRAVITY = 0.6;
-const JUMP_STRENGTH = -10;
+const GRAVITY = 0.5;
+const JUMP_STRENGTH = -9;
 const PIPE_WIDTH = 60;
 const PIPE_SPACING = 220;
 const PIPE_HEIGHT_VARIATION = 80;
@@ -16,6 +16,7 @@ const PIPE_MIN_HEIGHT = 50; // Minimum height of the top pipe
 const PIPE_MAX_HEIGHT = 300; // Maximum height of the top pipe
 const PIPE_MIN_GAP = 200; // Minimum gap between pipes
 const PIPE_MAX_GAP = 350; 
+const baseSpeed = 3;
 
 interface Bird {
   x: number;
@@ -27,12 +28,18 @@ interface Pipe {
   x: number;
   height: number;
   passed: boolean;
+  color: string;
 }
 
 const FlappyBird: React.FC = () => {
   const [bird, setBird] = useState<Bird>({ x: 100, y: 250, velocity: 0 });
+
+  const generateRandomColor = () => (Math.random() > 0.5 ? "green" : "red");
+
+  const pipeColor = generateRandomColor();
+
   const [pipes, setPipes] = useState<Pipe[]>([
-    { x: 400, height: Math.random() * PIPE_HEIGHT_VARIATION + 100, passed: false },
+    { x: 400, height: Math.random() * PIPE_HEIGHT_VARIATION + 100, passed: false, color: pipeColor },
   ]);
   const [isGameOver, setIsGameOver] = useState(false);
   const [score, setScore] = useState(0); // Score state
@@ -41,17 +48,27 @@ const FlappyBird: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const birdGif = useRef<HTMLImageElement | null>(null); // Use one ref for the bird GIF
   const [backgroundMusic, setBackgroundMusic] = useState<Howl | null>(null); // For background music
-
+  const currentSpeed = baseSpeed + score * 0.1;
+ 
+  const jumpSound = new Howl({
+    src: ["/flap2.wav"], // Path to your jump sound file
+    volume: 0.1, // Adjust volume if necessary
+  });
+  
+  const gameOverSound = new Howl({
+    src: ["/death.mp3"], // Path to your game over sound file
+    volume: 0.07, // Adjust volume if necessary
+  });
 
   useEffect(() => {
     const music = new Howl({
-      src: ["/babypepe bonkers.mp3"], // Path to your background music file in public folder
+      src: ["/babypepe bonkers.mp3"], 
       loop: true, // Make sure it loops continuously
-      volume: 0.5, // Set the volume
+      volume: 0.45, // Set the volume
     });
     setBackgroundMusic(music);
     music.play(); // Start playing the background music
-
+ 
     return () => {
       music.stop(); // Stop the music when the component unmounts or when game resets
     };
@@ -72,7 +89,7 @@ const FlappyBird: React.FC = () => {
 
   const resetGame = () => {
     setBird({ x: 100, y: 250, velocity: 0 });
-    setPipes([{ x: 400, height: Math.random() * PIPE_HEIGHT_VARIATION + 100, passed: false }]);
+    setPipes([{ x: 400, height: Math.random() * PIPE_HEIGHT_VARIATION + 100, passed: false, color: pipeColor }]);
     setIsGameOver(false);
     setScore(0); // Reset score when game restarts
     setFinalScore(null);
@@ -81,10 +98,13 @@ const FlappyBird: React.FC = () => {
         backgroundMusic.stop();
         backgroundMusic.play();
       }
+
+  
   };
 
   const handleJump = useCallback(() => {
     if (!isGameOver) {
+        jumpSound.play();
       setBird((prevBird) => ({ ...prevBird, velocity: JUMP_STRENGTH }));
     } else {
       resetGame();
@@ -97,6 +117,10 @@ const FlappyBird: React.FC = () => {
       const newVelocity = prevBird.velocity + GRAVITY;
 
       if (newY > 480 || newY < 0) {
+        if (!isGameOver) {
+            // Play game over sound only once when the game ends
+            gameOverSound.play();
+          }
         setIsGameOver(true);
         setFinalScore(score); // Set final score when game is over
       }
@@ -104,10 +128,13 @@ const FlappyBird: React.FC = () => {
       return { ...prevBird, y: newY, velocity: newVelocity };
     });
 
+
+
+
     setPipes((prevPipes) => {
       const updatedPipes = prevPipes.map((pipe) => ({
         ...pipe,
-        x: pipe.x - 3,
+        x: pipe.x - currentSpeed,
       }));
 
       if (updatedPipes.length === 0 || updatedPipes[0].x + PIPE_WIDTH < 0) {
@@ -117,16 +144,19 @@ const FlappyBird: React.FC = () => {
     
         // Generate a random gap (optional)
         const randomGap = Math.random() * (PIPE_MAX_GAP - PIPE_MIN_GAP) + PIPE_MIN_GAP;
-    
+
 
         const newPipeX = updatedPipes.length
           ? updatedPipes[updatedPipes.length - 1].x + PIPE_SPACING
           : 400; // Default starting position for the new pipe
 
           updatedPipes.push({
-            x: newPipeX,
-            height: randomHeight, // Use the random height for the pipe
-            passed: false, // Reset 'passed' to false for the new pipe
+            x: updatedPipes.length
+              ? updatedPipes[updatedPipes.length - 1].x + PIPE_SPACING
+              : 400, // Default starting position for the new pipe
+            height: randomHeight,
+            color: pipeColor,
+            passed: false, // Reset 'passed' status
           });
         }
 
@@ -143,6 +173,7 @@ const FlappyBird: React.FC = () => {
              bird.y + hitboxOffsetY + hitboxHeight > pipe.height + PIPE_GAP) // Adjusted bird's hitbox height
           ) {
           setIsGameOver(true);
+          gameOverSound.play();
           setFinalScore(score); // Set final score when game is over
         }
       });
@@ -190,7 +221,7 @@ const FlappyBird: React.FC = () => {
 
       // Draw pipes
       pipes.forEach((pipe) => {
-        ctx.fillStyle = "green";
+        ctx.fillStyle = pipe.color;
         ctx.fillRect(pipe.x, 0, PIPE_WIDTH, pipe.height); // Upper pipe
         ctx.fillRect(pipe.x, pipe.height + PIPE_GAP, PIPE_WIDTH, canvas.height); // Lower pipe
       });
@@ -201,14 +232,7 @@ const FlappyBird: React.FC = () => {
       }
 
 
-      ctx.strokeStyle = "red"; // Use a red color for the hitbox
-      ctx.lineWidth = 2; // Make the line a bit thicker
-      ctx.strokeRect(
-        bird.x + hitboxOffsetX, // X position
-        bird.y + hitboxOffsetY, // Y position
-        hitboxWidth, // Width of the hitbox
-        hitboxHeight // Height of the hitbox
-      );
+    
       // Draw score
       ctx.fillStyle = "black";
       ctx.font = "30px Arial";
@@ -217,7 +241,11 @@ const FlappyBird: React.FC = () => {
   }, [bird, pipes, isImageLoaded, score]);
 
   return (
-    <div>
+    <div style={{ textAlign: "center" }}>
+    {/* Title */}
+    <h1 style={{ fontFamily: 'Comic Sans MS', fontSize: '36px', color: 'green', margin: '20px 0' }}>
+      FLAPPY BABY PEPE!
+    </h1>
       {isImageLoaded ? ( // Conditionally render the game if the image is loaded
         <>
           <canvas ref={canvasRef} width={400} height={500} style={{ border: "1px solid black" }} />
