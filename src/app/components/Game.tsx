@@ -258,9 +258,10 @@ const FlappyPepe: React.FC = () => {
   return (
     <div style={{ textAlign: "center" }}>
     {/* Title */}
-    <h1 style={{ fontFamily: 'Comic Sans MS', fontSize: '36px', color: 'green', margin: '20px 0' }}>
+    <h1 style={{ fontFamily: 'Comic Sans MS', fontSize: '36px', color: 'green', margin: '10px 0' }}>
       FLAPPY BABY PEPE!
     </h1>
+    <h2>0x69BABE</h2>
       {isImageLoaded ? ( // Conditionally render the game if the image is loaded
         <>
           <canvas ref={canvasRef} width={400} height={500} style={{ border: "1px solid black" }} />
