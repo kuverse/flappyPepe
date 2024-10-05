@@ -59,6 +59,9 @@ const FlappyPepe: React.FC = () => {
   const [scores, setScores] = useState<number[]>([]); // State to store the scores
 
 
+  const incrementScore = useCallback(() => {
+    setScore((prevScore) => prevScore + 1);
+  }, []);
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
@@ -72,30 +75,24 @@ const FlappyPepe: React.FC = () => {
           if (screenWidth > 1200) {
             birdElement.style.top = '40%';
             birdElement.style.left = '41%';
-            console.log('Position updated for extra large screen');
           }   else if (screenWidth > 1000) {
             birdElement.style.top = '40%';
             birdElement.style.left = '40%';
-            console.log('Position updated for larger screen');
           } 
           else if (screenWidth > 800) {
             birdElement.style.top = '40%';
             birdElement.style.left = '37%';
-            console.log('Position updated for larger screen');
           } 
           else if (screenWidth > 700) {
             birdElement.style.top = '40%';
             birdElement.style.left = '35%';
-            console.log('Position updated for larger screen');
           } 
           else if (screenWidth > 600) {
             birdElement.style.top = '40%';
             birdElement.style.left = '32%';
-            console.log('Position updated for larger screen');
           } else {
             birdElement.style.top = '40%';
             birdElement.style.left = '25%';
-            console.log('Position updated for smaller screen');
           }
         } else {
           console.error('Bird element not found');
@@ -117,7 +114,6 @@ const FlappyPepe: React.FC = () => {
   useEffect(() => {
     try {
       const savedScores = JSON.parse(localStorage.getItem('scores') || '[]');
-      console.log('Loaded scores from localStorage:', savedScores);
       setScores(savedScores);
     } catch (error) {
       console.error('Error parsing scores from localStorage:', error);
@@ -127,7 +123,6 @@ const FlappyPepe: React.FC = () => {
   // Whenever scores change, save them to localStorage
   useEffect(() => {
     if (scores.length > 0) { // Only save if there are scores to save
-      console.log('Saving scores to localStorage:', scores);
       localStorage.setItem('scores', JSON.stringify(scores));
     }
   }, [scores]);
@@ -160,6 +155,15 @@ const FlappyPepe: React.FC = () => {
 
 
 
+const handleGameOver = useCallback(() => {
+  setIsGameOver(true);
+  gameOverSound.play();
+  setFinalScore(score);
+  setScores((prevScores) => {
+    const updatedScores = [...prevScores, score];
+    return updatedScores.sort((a, b) => b - a).slice(0, 10); // Keep top 10 scores
+  });
+}, [score, gameOverSound]);
 
 
 
@@ -174,14 +178,8 @@ const FlappyPepe: React.FC = () => {
 
       if (newY > 480 || newY < 0) {
         if (!isGameOver) {
-            gameOverSound.play();
-          }
-        setIsGameOver(true);
-        setFinalScore(score);
-        setScores((prevScores) => {
-          const updatedScores = [...prevScores, score];
-          return updatedScores.sort((a, b) => b - a).slice(0, 10); // Keep top 10 scores
-        });
+          handleGameOver();
+        }
         
       }
       return { ...prevBird, y: newY, velocity: newVelocity };
@@ -213,7 +211,7 @@ const FlappyPepe: React.FC = () => {
 
       updatedPipes.forEach((pipe) => {
         if (pipe.x + PIPE_WIDTH < bird.x && !pipe.passed) {
-          setScore((prevScore) => prevScore + 1); // Increment score when passing a pipe
+          incrementScore();// Increment score when passing a pipe
           pipe.passed = true; // Mark pipe as passed
         }
 
@@ -223,13 +221,7 @@ const FlappyPepe: React.FC = () => {
             (bird.y + hitboxOffsetY < pipe.height || // Adjusted bird's hitbox height
              bird.y + hitboxOffsetY + hitboxHeight > pipe.height + PIPE_GAP) // Adjusted bird's hitbox height
           ) {
-          setIsGameOver(true);
-          gameOverSound.play();
-          setFinalScore(score);
-          setScores((prevScores) => {
-            const updatedScores = [...prevScores, score];
-            return updatedScores.sort((a, b) => b - a).slice(0, 10); // Keep top 10 scores
-          });
+            handleGameOver();
           
         }
       });
