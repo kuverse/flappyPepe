@@ -50,7 +50,6 @@ const FlappyPepe: React.FC = () => {
   const [isGameOver, setIsGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [finalScore, setFinalScore] = useState<number | null>(null);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const currentSpeed = baseSpeed + score * 0.1;
   const [gameStarted, setGameStarted] = useState(false);
@@ -306,7 +305,7 @@ const handleGameOver = useCallback(() => {
     }
   
      
-  }, [ pipes, isImageLoaded, score]);
+  }, [ pipes, score]);
   
 
   
@@ -316,7 +315,7 @@ const handleGameOver = useCallback(() => {
       {gameStarted && (<BackgroundMusic />)}
 
 
-    <div className="game-container" style={{ position: "relative" }}>
+    <div className="gamContainer" style={{ position: "relative" }}>
 
       <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} style={{ border: "1px solid black" }} />
       <div

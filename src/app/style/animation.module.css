@@ -27,22 +27,45 @@
   }
 
 
-
   .background {
     position: fixed; /* Keeps the background fixed in one place */
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%); /* Centers the background */
-    width: 600px; /* Fixed width of the background */
-    height: 800px; /* Fixed height of the background */
+    
+    /* Use percentage-based width and height for responsiveness */
+    width: 100%; /* 90% of the viewport width */
+    height: 100%; /* 90% of the viewport height */
+    
+    max-width: 600px; /* Maximum width for larger screens */
+    max-height: 800px; /* Maximum height for larger screens */
+    
     background-image: url('/background.png'); /* Your background image */
     background-size: cover; /* Ensure the background image fits within the card */
     background-position: center; /* Center the image within the container */
     background-repeat: no-repeat; /* No repeat */
     background-attachment: fixed; /* Keeps the background stationary */
+    
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Optional: Add a shadow to make it look like a card */
-    z-index: 200; /* Behind everything */
+    z-index: 200; /* Z-index to control layering */
   }
+  
+  /* Adjust layout for smaller devices */
+  @media (max-width: 768px) {
+    .background {
+      width: 95vw; /* Allow more width on smaller screens */
+      height: 85vh; /* Slightly reduce height for smaller devices */
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .background {
+      width: 100vw; /* Full width for very small screens */
+      height: 90vh; /* Keep height proportional */
+      box-shadow: none; /* Remove shadow on small screens for simpler look */
+    }
+  }
+  
   
 .help {
   font-size: 2px;
@@ -311,4 +334,37 @@
 
 .closeButton:hover {
   background-color: #cc0000;
+}
+
+.gameContainer {
+  width: 90vw; /* 90% of the viewport width */
+  height: 90vh; /* 90% of the viewport height */
+  max-width: 800px; /* Maximum width to prevent it from getting too large */
+  max-height: 600px; /* Maximum height to prevent it from getting too large */
+  
+  background-color: #fff; /* Optional: Add background color for the container */
+  margin: 0 auto; /* Center the container horizontally */
+  position: relative; /* Positioning for game elements */
+  
+  display: flex; /* Use flexbox to center content */
+  justify-content: center; /* Center content horizontally */
+  align-items: center; /* Center content vertically */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Optional: Add shadow */
+  border-radius: 10px; /* Optional: Add rounded corners */
+}
+
+/* Adjust layout for smaller screens */
+@media (max-width: 768px) {
+  .gameContainer {
+    width: 95vw; /* Adjust width for smaller screens */
+    height: 85vh; /* Adjust height for smaller screens */
+  }
+}
+
+@media (max-width: 480px) {
+  .gameContainer {
+    width: 100vw; /* Full width for mobile */
+    height: 90vh; /* Full height for mobile */
+    box-shadow: none; /* Remove shadow for a simpler look on small screens */
+  }
 }

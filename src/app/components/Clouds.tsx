@@ -35,7 +35,7 @@ const CloudCanvas = () => {
       };
 
       // Create 3 clouds (you can adjust this number)
-      let clouds = Array.from({ length: 3 }, createCloud);
+      const clouds = Array.from({ length: 3 }, createCloud);
 
       // Function to draw clouds
       const drawClouds = (ctx: CanvasRenderingContext2D) => {

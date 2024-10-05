@@ -42,7 +42,7 @@ const InfoPopup = () => {
           </p>
           
           <p style={{ fontSize: '14px', color: '#777', marginBottom: '20px' }}>
-            If you'd like to support me and want to see continued development, drop a tip below.
+            If you would like to support me and want to see continued development, drop a tip below.
           </p>
           
           <p style={{ fontSize: '14px', color: '#000', fontWeight: 'bold', marginBottom: '20px', wordBreak: 'break-word' }}>
