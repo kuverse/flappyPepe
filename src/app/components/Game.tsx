@@ -300,7 +300,7 @@ const handleGameOver = useCallback(() => {
       ctx.fillStyle = "white";
       ctx.font = "45px Arial";
       ctx.textAlign = "center"; // Align text to the center
-      ctx.fillText(`Score: ${score}`, canvas.width / 2, 150); // Center horizontally
+      ctx.fillText(`Score: ${score}`, canvas.width / 2, 110); // Center horizontally
 
     }
   
