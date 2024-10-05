@@ -2,22 +2,28 @@
 import { useEffect, useState, useRef, useCallback } from "react";
 import { Howl } from "howler"; // Import Howler.js
 import BackgroundMusic from "./Music";
+import styles from "../style/animation.module.css";
+import GameOverOverlay from "./GameoverOverlay";
+import Leaderboard from "./Leaderboard";
+import InfoPopup from "./Info";
+import CloudCanvas from "./Clouds";
 
 
-const GRAVITY = 0.5;
-const JUMP_STRENGTH = -9;
-const PIPE_WIDTH = 60;
-const PIPE_SPACING = 220;
+const GRAVITY = 0.4;
+const JUMP_STRENGTH = -8;
+const PIPE_WIDTH = 50;
+const PIPE_SPACING = 235;
 const PIPE_HEIGHT_VARIATION = 80;
-const PIPE_GAP = 245; // Larger gap
-const hitboxWidth = 65;  // Reduced width for hitbox
-const hitboxHeight = 90; // Reduced height for hitbox
-const hitboxOffsetX = 40; // Offset from the bird's X position to center the hitbox
-const hitboxOffsetY = 30;
-const PIPE_MIN_HEIGHT = 50; // Minimum height of the top pipe
-const PIPE_MAX_HEIGHT = 300; // Maximum height of the top pipe
+const PIPE_GAP = 260; 
+const hitboxWidth = 50;  
+const hitboxHeight = 80; 
+const hitboxOffsetX = 20;
+const hitboxOffsetY = 10;
+const PIPE_MIN_HEIGHT = 40; 
+const PIPE_MAX_HEIGHT = 300;
 const baseSpeed = 3;
-
+const canvasHeight = 620;
+const canvasWidth = 400;
 
 
 interface Bird {
@@ -25,7 +31,6 @@ interface Bird {
   y: number;
   velocity: number;
 }
-
 interface Pipe {
   x: number;
   height: number;
@@ -33,78 +38,134 @@ interface Pipe {
   color: string;
 }
 
+
+
+
+
 const FlappyPepe: React.FC = () => {
   const [bird, setBird] = useState<Bird>({ x: 100, y: 250, velocity: 0 });
-
   const generateRandomColor = () => (Math.random() > 0.5 ? "green" : "red");
-
   const pipeColor = generateRandomColor();
-
-  const [pipes, setPipes] = useState<Pipe[]>([
-    { x: 400, height: Math.random() * PIPE_HEIGHT_VARIATION + 100, passed: false, color: pipeColor },
-  ]);
+  const [pipes, setPipes] = useState<Pipe[]>([{ x: 400, height: Math.random() * PIPE_HEIGHT_VARIATION + 100, passed: false, color: pipeColor },]);
   const [isGameOver, setIsGameOver] = useState(false);
-  const [score, setScore] = useState(0); // Score state
-  const [finalScore, setFinalScore] = useState<number | null>(null); // Final score on death
+  const [score, setScore] = useState(0);
+  const [finalScore, setFinalScore] = useState<number | null>(null);
   const [isImageLoaded, setIsImageLoaded] = useState(false);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const birdGif = useRef<HTMLImageElement | null>(null); // Use one ref for the bird GIF
   const currentSpeed = baseSpeed + score * 0.1;
-  const [gameStarted, setGameStarted] = useState(false); // Track if the game has started
+  const [gameStarted, setGameStarted] = useState(false);
+  const jumpSound = new Howl({ src: ["/flap2.wav"], volume: 0.1,});
+  const gameOverSound = new Howl({ src: ["/death.mp3"],volume: 0.07, });
+  const [scores, setScores] = useState<number[]>([]); // State to store the scores
 
-
-
-
-
-  const jumpSound = new Howl({
-    src: ["/flap2.wav"], // Path to your jump sound file
-    volume: 0.1, // Adjust volume if necessary
-  });
-  
-  const gameOverSound = new Howl({
-    src: ["/death.mp3"], // Path to your game over sound file
-    volume: 0.07, // Adjust volume if necessary
-  });
-
- 
 
 
   useEffect(() => {
-    const birdImage = new Image();
-    birdImage.src = "/0014.png"; // Replace with the path to your GIF
-    birdImage.onload = () => {
-      setIsImageLoaded(true); // Set the flag to true when the image is loaded
-    };
-    birdImage.onerror = () => {
-      console.error("Failed to preload the bird image");
-    };
-    birdGif.current = birdImage; // Store the preloaded image in the ref
+    if (typeof window !== 'undefined') {
+      const handleResize = () => {
+        const screenWidth = window.innerWidth;
+        const birdElement = document.querySelector(`.${styles["pepe-animation"]}`) as HTMLElement | null;
+  
+        if (birdElement) {
+          birdElement.style.position = 'absolute';
+        
+          if (screenWidth > 1200) {
+            birdElement.style.top = '40%';
+            birdElement.style.left = '41%';
+            console.log('Position updated for extra large screen');
+          }   else if (screenWidth > 1000) {
+            birdElement.style.top = '40%';
+            birdElement.style.left = '40%';
+            console.log('Position updated for larger screen');
+          } 
+          else if (screenWidth > 800) {
+            birdElement.style.top = '40%';
+            birdElement.style.left = '37%';
+            console.log('Position updated for larger screen');
+          } 
+          else if (screenWidth > 700) {
+            birdElement.style.top = '40%';
+            birdElement.style.left = '35%';
+            console.log('Position updated for larger screen');
+          } 
+          else if (screenWidth > 600) {
+            birdElement.style.top = '40%';
+            birdElement.style.left = '32%';
+            console.log('Position updated for larger screen');
+          } else {
+            birdElement.style.top = '40%';
+            birdElement.style.left = '25%';
+            console.log('Position updated for smaller screen');
+          }
+        } else {
+          console.error('Bird element not found');
+        }
+        
+      };
+  
+      window.addEventListener('resize', handleResize);
+  
+      handleResize();
+  
+      return () => {
+        window.removeEventListener('resize', handleResize);
+      };
+    }
   }, []);
+  
+  
+  useEffect(() => {
+    try {
+      const savedScores = JSON.parse(localStorage.getItem('scores') || '[]');
+      console.log('Loaded scores from localStorage:', savedScores);
+      setScores(savedScores);
+    } catch (error) {
+      console.error('Error parsing scores from localStorage:', error);
+    }
+  }, []);
+
+  // Whenever scores change, save them to localStorage
+  useEffect(() => {
+    if (scores.length > 0) { // Only save if there are scores to save
+      console.log('Saving scores to localStorage:', scores);
+      localStorage.setItem('scores', JSON.stringify(scores));
+    }
+  }, [scores]);
+  
+  
+  
+
 
   const resetGame = () => {
     setBird({ x: 100, y: 250, velocity: 0 });
     setPipes([{ x: 400, height: Math.random() * PIPE_HEIGHT_VARIATION + 100, passed: false, color: pipeColor }]);
     setIsGameOver(false);
-    setScore(0); // Reset score when game restarts
+    setScore(0); 
     setFinalScore(null);
+    setGameStarted(false);
 
-  
   };
 
   const handleJump = useCallback(() => {
-
     if (!gameStarted) {
-        setGameStarted(true); // Start the game on first jump
+        setGameStarted(true);
       }
-
     if (!isGameOver) {
-        
         jumpSound.play();
       setBird((prevBird) => ({ ...prevBird, velocity: JUMP_STRENGTH }));
     } else {
       resetGame();
     }
 }, [gameStarted, isGameOver, jumpSound, resetGame]);
+
+
+
+
+
+
+
+
+
 
   const updateGame = useCallback(() => {
     setBird((prevBird) => {
@@ -113,13 +174,16 @@ const FlappyPepe: React.FC = () => {
 
       if (newY > 480 || newY < 0) {
         if (!isGameOver) {
-            // Play game over sound only once when the game ends
             gameOverSound.play();
           }
         setIsGameOver(true);
-        setFinalScore(score); // Set final score when game is over
+        setFinalScore(score);
+        setScores((prevScores) => {
+          const updatedScores = [...prevScores, score];
+          return updatedScores.sort((a, b) => b - a).slice(0, 10); // Keep top 10 scores
+        });
+        
       }
-
       return { ...prevBird, y: newY, velocity: newVelocity };
     });
 
@@ -162,6 +226,11 @@ const FlappyPepe: React.FC = () => {
           setIsGameOver(true);
           gameOverSound.play();
           setFinalScore(score);
+          setScores((prevScores) => {
+            const updatedScores = [...prevScores, score];
+            return updatedScores.sort((a, b) => b - a).slice(0, 10); // Keep top 10 scores
+          });
+          
         }
       });
 
@@ -170,110 +239,118 @@ const FlappyPepe: React.FC = () => {
   }, [bird, score]);
 
 
-
-
   useEffect(() => {
     const interval = setInterval(() => {
       if (!isGameOver && gameStarted) {
         updateGame();
       }
-    }, 16); // Approx 60 FPS
+    }, 16);
     return () => clearInterval(interval);
   }, [updateGame, isGameOver, gameStarted]);
 
 
-
-
+//Handle Jump//
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
       if (event.code === "Space") {
-        handleJump(); // Play jump sound and trigger jump on space bar press
+        handleJump();
       }
     };
-  
     const handleTouchStart = () => {
-      handleJump(); // Trigger jump on touch
-    };
-  
-    // Add event listeners for both keydown and touchstart
+      handleJump();
+    };  
     window.addEventListener("keydown", handleKeyDown);
     window.addEventListener("touchstart", handleTouchStart);
   
     return () => {
-      // Clean up event listeners on unmount
       window.removeEventListener("keydown", handleKeyDown);
       window.removeEventListener("touchstart", handleTouchStart);
     };
   }, [handleJump]);
   
 
-
-
+  
 
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
 
-    if (ctx && canvas) {
-      // Ensure smooth image scaling by disabling image smoothing
+
+    
+    if (ctx && canvas ) {
       ctx.imageSmoothingEnabled = false; 
-
       ctx.clearRect(0, 0, canvas.width, canvas.height);
-
-      ctx.fillStyle = "#ADD8E6"; // Light blue sky
+  
+      // Draw the background
+      ctx.fillStyle = "#ADD8E6";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
-
-      // Draw pipes
+  
+      // Draw the pipes
       pipes.forEach((pipe) => {
         ctx.fillStyle = pipe.color;
         ctx.fillRect(pipe.x, 0, PIPE_WIDTH, pipe.height); // Upper pipe
         ctx.fillRect(pipe.x, pipe.height + PIPE_GAP, PIPE_WIDTH, canvas.height); // Lower pipe
       });
+  
+  
+  
+      {/*// Draw the hitbox (red square)
+      ctx.strokeStyle = "red";
+      ctx.lineWidth = 2;
+      ctx.strokeRect(
+        bird.x + hitboxOffsetX,  // X position of the hitbox
+        bird.y + hitboxOffsetY,  // Y position of the hitbox
+        hitboxWidth,             // Width of the hitbox
+        hitboxHeight             // Height of the hitbox
+      );
+      */}
+      // Draw the score
+     // Draw the score
+      ctx.fillStyle = "white";
+      ctx.font = "45px Arial";
+      ctx.textAlign = "center"; // Align text to the center
+      ctx.fillText(`Score: ${score}`, canvas.width / 2, 50); // Center horizontally
 
-      // Draw bird with GIF (only if image is loaded)
-      if (birdGif.current && isImageLoaded) {
-        ctx.drawImage(birdGif.current, bird.x, bird.y, 140, 140); // Increased size of the bird GIF
-      }
-
-
-    
-      // Draw score
-      ctx.fillStyle = "black";
-      ctx.font = "30px Arial";
-      ctx.fillText(`Score: ${score}`, 10, 50); // Display score in the top-left corner
     }
-  }, [bird, pipes, isImageLoaded, score]);
-
-
-
-// Extend the Window interface to include TelegramGameProxy
-
+  
+     
+  }, [ pipes, isImageLoaded, score]);
   
 
   
   return (
-    <div style={{ textAlign: "center" }}>
+    <div style={{ textAlign: "center", padding: '50px', marginTop: '25px'}}>
+
       {gameStarted && (<BackgroundMusic />)}
-      <h1 style={{ fontFamily: 'Comic Sans MS', fontSize: '36px', color: 'green', margin: '10px 0' }}>
-      FLAPPY BABY PEPE!
-    </h1>
-    <h2>0x69BABE</h2>
-      {isImageLoaded ? ( // Conditionally render the game if the image is loaded
-        <>
-          <canvas ref={canvasRef} width={400} height={500} style={{ border: "1px solid black" }} />
-          {isGameOver && (<>
-            <div style={{ textAlign: "center", marginTop: 20 }}>
-              <h2>Game Over!</h2>
-              <p>Final Score: {finalScore}</p>
-              <p>Press Space to Restart</p>
-            </div>
-            </>
-          )}
-        </>
-      ) : (
-        <div style={{ textAlign: "center" }}>Loading...</div> // Loading message or spinner
-      )}
+
+
+    <div className="game-container" style={{ position: "relative" }}>
+
+      <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} style={{ border: "1px solid black" }} />
+      <div
+        className={isGameOver ? styles.pepeStatic : styles["pepe-animation"]}
+        style={{
+          position: "absolute", // Stays within the relative parent of the canvas
+          top: bird.y  + "px",  // Same as canvas hitbox
+          left: bird.x  + "px", // Same as canvas hitbox
+          
+        }}
+      ></div>
+       </div>
+       
+       <GameOverOverlay
+          isGameOver={isGameOver}
+          finalScore={finalScore ?? 0}
+          onRestart={resetGame}
+        />
+
+     
+    <div className={styles.background} />
+    <CloudCanvas />
+    <Leaderboard scores={scores} />
+    <InfoPopup/>
     </div>
+    
   );
 }
 

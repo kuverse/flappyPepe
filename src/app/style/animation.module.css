@@ -1,0 +1,314 @@
+.pepe-animation {
+    width: 100px; /* Adjust this size to the display size of the bird */
+    height: 100px; /* Adjust this size to the display size of the bird */
+    background-image: url('/sprite-pepe2.png'); /* Path to your sprite sheet */
+    background-position: 0 0; /* Start at the first frame */
+    background-size: 1000px 100px;
+    animation: play-animation 1.3s steps(10) infinite;
+  }
+  
+  .pepeStatic {
+    background-image: url('/deadpepe.png'); /* Same sprite sheet */
+    width: 100px;
+    height: 100px;
+    background-position: 0 0; /* Static image (first frame) */
+    animation: none; /* No animation */
+  }
+
+
+
+  @keyframes play-animation {
+    from {
+      background-position: 0 0;
+    }
+    to {
+      background-position: -2000px 0; /* Move to the last frame */
+    }
+  }
+
+
+
+  .background {
+    position: fixed; /* Keeps the background fixed in one place */
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%); /* Centers the background */
+    width: 600px; /* Fixed width of the background */
+    height: 800px; /* Fixed height of the background */
+    background-image: url('/background.png'); /* Your background image */
+    background-size: cover; /* Ensure the background image fits within the card */
+    background-position: center; /* Center the image within the container */
+    background-repeat: no-repeat; /* No repeat */
+    background-attachment: fixed; /* Keeps the background stationary */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Optional: Add a shadow to make it look like a card */
+    z-index: 200; /* Behind everything */
+  }
+  
+.help {
+  font-size: 2px;
+}
+
+/* Other styles for your overlay content */
+.overlay {
+  padding: 60px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1; /* Keep it above the background */
+}
+
+.overlayContent {
+  background-color: rgba(255, 255, 255, 0.8);
+  padding: 30px;
+  border-radius: 8px;
+  text-align: center;
+}
+
+
+  .bird {
+    position: absolute;
+    top: 50%; /* Adjust this based on your desired positioning */
+    left: 50%; /* Adjust this based on your desired positioning */
+    transform: translate(-50%, -50%); /* Center Pepe in the hitbox */
+  }
+  
+  @media (min-width: 600px) {
+    .bird {
+      position: absolute;
+      top: 40%; /* Adjust the position when the screen is larger */
+      left: 40%;
+    }
+  }
+
+
+  /* Full-screen overlay */
+
+
+/* Full-screen overlay */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  opacity: 0.8;
+  box-shadow: #383838;
+  padding:20px;
+}
+
+/* Overlay content styling */
+.overlayContent {
+  background: #ffffff;
+  padding: 30px;
+  border-radius: 10px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Game over title */
+.overlayContent h2 {
+  color: #383838; /* Game Over text color */
+  font-size: 36px;
+  margin-bottom: 20px;
+}
+
+/* Final score */
+.overlayContent p {
+  font-size: 20px;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+/* Restart button styling */
+.restartButton {
+  padding: 10px 20px;
+  background-color: #ff3333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 28px;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+.restartButton:hover {
+  background-color: #cc0000;
+}
+
+
+.overlayContent .restartInstructions {
+  font-size: 15px;
+  color: #666;
+}
+
+/* Additional instructions */
+.restartInstructions {
+  margin-top: 10px;
+  font-size: 8px;
+  color: #666;
+}
+
+/* Fade-in animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+
+.leaderboardContainer {
+  position: fixed;
+  bottom: 10px;
+  right: 10px;
+  z-index: 1000;
+}
+
+.leaderboardContainer h2 {
+  font-size: 22px;
+  text-align: center;
+  padding: 20px;
+}
+
+.leaderboardContainer ul {
+  list-style: none;
+  padding: 20px;
+  margin: 0;
+}
+
+.leaderboardContainer li {
+  font-size: 18px;
+  margin-bottom: 5px;
+
+}
+
+/* Button to open/close the leaderboard */
+.leaderboardButton {
+  width: 150px; /* Adjust the size of the PNG */
+  height: 150px; /* Adjust the size of the PNG */
+  cursor: pointer;
+  border: none; /* Remove any default border (if any) */
+  background: none; 
+  z-index: 1000;/* Ensure no background is applied */
+}
+
+/* No background on hover */
+.leaderboardButton:hover {
+  background-color: none; /* No background color on hover */
+  color: white; /* Ensure the text stays white */
+  text-decoration: underline; /* Optional: Add underline on hover for a visual cue */
+}
+
+/* Full-screen overlay for the leaderboard */
+.overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* On top of everything */
+  padding: 20px;
+}
+
+/* Content box inside the overlay */
+.leaderboardContent {
+  border-radius: 10px;
+  text-align: center;
+  width: 300px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  z-index: 10000; /* On top of the overlay */
+  padding: 20px;
+}
+
+/* Close button inside the leaderboard */
+.closeButton {
+  margin-top: 10px;
+  padding: 12px 70px;
+  background-color: #ff3333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.closeButton:hover {
+  background-color: #cc0000;
+}
+
+
+
+
+
+/* Styles for the info icon container */
+.iconContainer {
+  position: fixed;
+  bottom: 10px;
+  right: 20px;
+  z-index: 1000;
+}
+
+/* Icon styles */
+.infoIcon {
+  width: 30px; /* Adjust size as needed */
+  height: 30px;
+  cursor: pointer;
+}
+
+/* Full-screen overlay */
+.overlay2 {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999; /* On top of everything */
+}
+
+/* Popup content box */
+.popupContent {
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  text-align: center;
+  width: 400px; /* Adjust the width if needed */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  color: #333;
+}
+
+/* Close button */
+.closeButton {
+  margin-top: 20px;
+  padding: 8px 16px;
+  background-color: #ff3333;
+  color: white;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  padding: 15px 60px;
+
+}
+
+.closeButton:hover {
+  background-color: #cc0000;
+}

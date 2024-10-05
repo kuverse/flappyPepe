@@ -4,9 +4,9 @@ import { Howl } from 'howler';
 const BackgroundMusic = () => {
   useEffect(() => {
     const music = new Howl({
-      src: ['/babypepe.mp3'], // Path to your background music
-      loop: true, // Ensure it loops continuously
-      volume: 0.5, // Adjust volume
+      src: ['/babypepe.mp3'], 
+      loop: true,
+      volume: 0.25,
     });
 
     music.play();
@@ -16,7 +16,7 @@ const BackgroundMusic = () => {
     };
   }, []);
 
-  return null; // This component only handles the music, no UI
+  return null; 
 };
 
 export default BackgroundMusic;
