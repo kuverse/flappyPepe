@@ -277,7 +277,7 @@ const handleGameOver = useCallback(() => {
   
   
   
-      
+      {/*}
       ctx.strokeStyle = "red";
       ctx.lineWidth = 2;
 
@@ -287,7 +287,7 @@ const handleGameOver = useCallback(() => {
         hitboxWidth,             
         hitboxHeight             
       );
-      
+      */}
 
       ctx.fillStyle = "white";
       ctx.font = "45px Arial";
