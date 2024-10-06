@@ -81,7 +81,6 @@ const FlappyPepe: React.FC = () => {
   
       const handleResize = () => {
         const screenWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
-        const devicePixelRatio = window.devicePixelRatio || 1;
         
         //console.log(`Screen width: ${screenWidth}, DPR: ${devicePixelRatio}`);
         
