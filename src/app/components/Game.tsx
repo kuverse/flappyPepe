@@ -1,6 +1,5 @@
 "use client";
 import { useEffect, useState, useRef, useCallback } from "react";
-import { Howl } from "howler"; // Import Howler.js
 import BackgroundMusic from "./Music";
 import styles from "../style/animation.module.css";
 import GameOverOverlay from "./GameoverOverlay";

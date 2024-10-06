@@ -29,7 +29,7 @@ const BackgroundMusic = () => {
       {/* Mute/Unmute Button */}
       <button
         onClick={toggleMute}
-        style={{
+        style={{          
           padding: '10px',
           fontSize: '24px',
           zIndex: "2000",
