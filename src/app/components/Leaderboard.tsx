@@ -23,7 +23,7 @@ const Leaderboard = ({ scores }: { scores: number[] }) => {
         {isOpen && (
           <div className={styles.overlay}>
             <div className={styles.leaderboardContent}>
-              <h2>Leaderboard Top 10</h2>
+              <h2>Top 5 Scores</h2>
               <ul>
                 {scores.map((score: number, index: number) => (
                   <li key={index}>Round {index + 1}: {score}</li>

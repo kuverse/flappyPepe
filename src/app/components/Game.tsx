@@ -14,17 +14,16 @@ const JUMP_STRENGTH = -8;
 const PIPE_WIDTH = 50;
 const PIPE_SPACING = 235;
 const PIPE_HEIGHT_VARIATION = 80;
-const PIPE_GAP = 260; 
+const PIPE_GAP = 265; 
 const hitboxWidth = 40;  
 const hitboxHeight = 80; 
 const hitboxOffsetX = 30;
 const hitboxOffsetY = -10;
 const PIPE_MIN_HEIGHT = 40; 
 const PIPE_MAX_HEIGHT = 300;
-const baseSpeed = 3;
+const gamebaseSpeed = 3;
 const canvasHeight = 600;
 const canvasWidth = 400;
-
 
 interface Bird {
   x: number;
@@ -39,9 +38,6 @@ interface Pipe {
 }
 
 
-
-
-
 const FlappyPepe: React.FC = () => {
   const [bird, setBird] = useState<Bird>({ x: 100, y: 250, velocity: 0 });
   const generateRandomColor = () => (Math.random() > 0.5 ? "green" : "red");
@@ -51,17 +47,41 @@ const FlappyPepe: React.FC = () => {
   const [score, setScore] = useState(0);
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
+
+  const [baseSpeed, setBaseSpeed] = useState(gamebaseSpeed);
+
   const currentSpeed = baseSpeed + score * 0.05;
   const [gameStarted, setGameStarted] = useState(false);
-  const jumpSound = new Howl({ src: ["/flap2.wav"], volume: 0.1,});
-  const gameOverSound = new Howl({ src: ["/death.mp3"],volume: 0.07, });
+
+const jumpSound = new Howl({ src: ["/flap2.wav"], volume: 0.1, preload: true });
+const gameOverSound = new Howl({ src: ["/death.mp3"], volume: 0.07, preload: true });
+const drinkBottle = new Howl({ src: ["/drink.mp3"], volume: 0.07, preload: true });
+
   const [scores, setScores] = useState<number[]>([]); // State to store the scores
+  const [coin, setCoin] = useState<{ x: number, y: number } | null>(null); // Single coin at a time
+  const [coinImage, setCoinImage] = useState<HTMLImageElement | null>(null); // Store the coin image
 
 
   const incrementScore = useCallback(() => {
     setScore((prevScore) => prevScore + 1);
   }, []);
 
+  const resumeAudioContext = () => {
+    if (Howler.ctx && Howler.ctx.state === 'suspended') {
+      Howler.ctx.resume();
+    }
+  };
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = "/bottle1.png";
+    img.onload = () => {
+      setCoinImage(img);
+    };
+    img.onerror = () => {
+      console.error("Failed to load coin image.");
+    };
+  }, []);
 
 
 
@@ -113,10 +133,6 @@ const FlappyPepe: React.FC = () => {
   }, []);
 
 
-
-  
-  
-  
   useEffect(() => {
     try {
       const savedScores = JSON.parse(localStorage.getItem('scores') || '[]');
@@ -139,7 +155,7 @@ const FlappyPepe: React.FC = () => {
     setScore(0); 
     setFinalScore(null);
     setGameStarted(false);
-
+    setBaseSpeed(gamebaseSpeed);
   };
 
   const handleJump = useCallback(() => {
@@ -147,6 +163,7 @@ const FlappyPepe: React.FC = () => {
         setGameStarted(true);
       }
     if (!isGameOver) {
+        resumeAudioContext();
         jumpSound.play();
       setBird((prevBird) => ({ ...prevBird, velocity: JUMP_STRENGTH }));
     } else {
@@ -157,11 +174,12 @@ const FlappyPepe: React.FC = () => {
 
 const handleGameOver = useCallback(() => {
   setIsGameOver(true);
+  resumeAudioContext();
   gameOverSound.play();
   setFinalScore(score);
   setScores((prevScores) => {
     const updatedScores = [...prevScores, score];
-    return updatedScores.sort((a, b) => b - a).slice(0, 10); // Keep top 10 scores
+    return updatedScores.sort((a, b) => b - a).slice(0, 5);
   });
 }, [score, gameOverSound]);
 
@@ -171,7 +189,7 @@ const handleGameOver = useCallback(() => {
       const newY = prevBird.y + prevBird.velocity;
       const newVelocity = prevBird.velocity + GRAVITY;
 
-      if (newY > 480 || newY < 0) {
+      if (newY > 580 || newY < 0) {
         if (!isGameOver) {
           handleGameOver();
         } 
@@ -275,6 +293,33 @@ const handleGameOver = useCallback(() => {
       });
   
   
+      if (coin && coinImage) {
+        coin.x -= currentSpeed;
+        
+        ctx.drawImage(coinImage, coin.x, coin.y, 50, 50);
+
+        if (
+          bird.x < coin.x + 50 &&
+          bird.x + 50 > coin.x &&
+          bird.y < coin.y + 50 &&
+          bird.y + 50 > coin.y
+        ) {
+          setCoin(null);
+          console.log("Coin collected!");
+          resumeAudioContext();
+          drinkBottle.play();
+          incrementScore();
+          setBaseSpeed(baseSpeed * 0.95);
+          
+        }
+
+        if (coin.x + 50 < 0) {
+          setCoin(null);
+        }
+      }
+
+
+
   
       {/*}
       ctx.strokeStyle = "red";
@@ -294,15 +339,38 @@ const handleGameOver = useCallback(() => {
       ctx.fillText(`Score: ${score}`, canvas.width / 2, 100);
 
     }
-  
-     
-  }, [ pipes, score, bird.x, bird.y]);
+  }, [ pipes, score, bird.x, bird.y, coin]);
   
 
-  return (
+  useEffect(() => {
+    const generateCoin = () => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
+
+      const pipe = pipes.find((p) => p.x + PIPE_WIDTH > 0); // Pipe on the screen
+
+      if (pipe) {
+        const coinX = pipe.x + 45; 
+
+        const coinY = Math.random() * (canvas.height - 100);
+
+        setCoin({ x: coinX, y: coinY });
+      } else {
+        const randomX = canvas.width + 50; // Generate coin slightly off-screen to the right
+        const randomY = Math.random() * (canvas.height - 100) + 50; // Random vertical position
+        setCoin({ x: randomX, y: randomY });
+        console.log("No valid pipe found. Generated coin at random position:", randomX, randomY);
+      }
+    };
+    const interval = setInterval(generateCoin, 5500);
+    return () => clearInterval(interval);
+  }, []);
+
+
+
+  return (<>
     <div style={{ textAlign: "center", padding: '50px', marginTop: '25px'}}>
 
-      {gameStarted && (<BackgroundMusic />)}
 
 
       <div className="background-wrapper">
@@ -330,13 +398,16 @@ const handleGameOver = useCallback(() => {
           onRestart={resetGame}
         />
 
-     
+
     <div className={styles.background} />
     <CloudCanvas />
     <Leaderboard scores={scores} />
     <InfoPopup/>
-    </div>
     
+    </div>
+    <BackgroundMusic />
+
+    </>
   );
 }
 
