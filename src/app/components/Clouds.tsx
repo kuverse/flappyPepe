@@ -8,9 +8,8 @@ const CloudCanvas = () => {
     const ctx = canvas?.getContext("2d");
 
     if (ctx && canvas) {
-      // Load the cloud image
       const cloudImage = new Image();
-      cloudImage.src = "/cloud.png"; // Ensure the path is correct
+      cloudImage.src = "/cloud.png";
 
       cloudImage.onload = () => {
         requestAnimationFrame(animate);
@@ -20,30 +19,33 @@ const CloudCanvas = () => {
         console.error("Failed to load cloud image.");
       };
 
-      // Function to generate random x position and speed for each cloud
       const createCloud = () => {
-        const width = 180 + Math.random() * 50; // Larger cloud size (180 to 230 px)
-        const height = 90 + Math.random() * 30; // Larger height (90 to 120 px)
+        const width = 180 + Math.random() * 50; // Cloud size between 180 to 230 px
+        const height = 90 + Math.random() * 30; // Cloud height between 90 to 120 px
+        const zIndex = Math.floor(Math.random() * 6); // Random z-index value between 0 and 5
 
         return {
           x: Math.random() * canvas.width, // Random starting x-position
           y: Math.random() * (canvas.height * 0.5) + (canvas.height * 0.5) - height, // Ensure y-position keeps cloud fully visible
           width,
           height,
-          speed: 1.5 + Math.random() * 2.5, // Random speed (0.5 to 2.0)
+          speed: 1.5 + Math.random() * 2.5,
+          zIndex,
         };
       };
 
-      // Create 3 clouds (you can adjust this number)
       const clouds = Array.from({ length: 3 }, createCloud);
 
-      // Function to draw clouds
       const drawClouds = (ctx: CanvasRenderingContext2D) => {
-        clouds.forEach((cloud) => {
-          cloud.x -= cloud.speed; // Move clouds left by decreasing x position
+        const sortedClouds = [...clouds].sort((a, b) => a.zIndex - b.zIndex);
 
-          // If the cloud moves off the left side of the canvas, reset to the right side
+
+
+        sortedClouds.forEach((cloud) => {
+          cloud.x -= cloud.speed;
+
           if (cloud.x + cloud.width < 0) {
+            cloud.zIndex = Math.floor(Math.random() * 6);
             cloud.x = canvas.width; // Reset to right side of canvas
             cloud.y = Math.random() * (canvas.height * 0.5) + (canvas.height * 0.5) - cloud.height; // Ensure cloud stays fully visible
           }
@@ -59,7 +61,6 @@ const CloudCanvas = () => {
         requestAnimationFrame(animate); // Continue the animation
       };
 
-      // Set canvas dimensions
       canvas.width = 800;
       canvas.height = 600;
     }
@@ -72,8 +73,7 @@ const CloudCanvas = () => {
         position: "absolute",
         top: 0,
         left: 0,
-        pointerEvents: "none", // Ensure it doesn't block interactions
-        zIndex: 1000,
+        pointerEvents: "none",
       }}
     />
   );

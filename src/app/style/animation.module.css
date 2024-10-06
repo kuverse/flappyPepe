@@ -6,7 +6,7 @@
     background-size: 1000px 100px;
     animation: play-animation 1.3s steps(10) infinite;
   }
-  
+
   .pepeStatic {
     background-image: url('/deadpepe.png'); /* Same sprite sheet */
     width: 100px;
@@ -14,8 +14,6 @@
     background-position: 0 0; /* Static image (first frame) */
     animation: none; /* No animation */
   }
-
-
 
   @keyframes play-animation {
     from {
@@ -27,44 +25,77 @@
   }
 
 
+.background-wrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.background {
+  position: absolute; /* This makes the background fill the wrapper */
+  top: 50%; 
+  left: 50%;
+  transform: translate(-50%, -50%); /* Center the background */
+  width: 100vw; /* 90% of the viewport width */
+  height: 100vh; /* 90% of the viewport height */
+  max-width: 550px; /* Limit the width so it doesn’t stretch too wide */
+  max-height: 730px; /* Limit the height */
+  background-image: url('/background.png'); /* Add background image */
+  background-size: cover; /* Ensure the background image covers the area */
+  background-position: center; /* Center the background image */
+  border-radius: 10px; /* Optional: Rounded corners */
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Optional: shadow */
+  z-index: 1001; /* Ensure the background stays behind the canvas */
+}
+
+.gameCanvas {
+  position: absolute;
+  z-index: 10;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%); 
+  width: 100%; /* Canvas takes the full width of the background */
+  height: auto; /* Canvas takes the full height of the background */
+  border-radius: 10px; /* Optional: Rounded corners for the canvas */
+}
+
+
+@media (width: 412px) {
   .background {
-    position: fixed; /* Keeps the background fixed in one place */
-    top: 50%;
+    position: absolute; /* This makes the background fill the wrapper */
+    top: 40%; 
     left: 50%;
-    transform: translate(-50%, -50%); /* Centers the background */
-    
-    /* Use percentage-based width and height for responsiveness */
-    width: 100%; /* 90% of the viewport width */
-    height: 100%; /* 90% of the viewport height */
-    
-    max-width: 600px; /* Maximum width for larger screens */
-    max-height: 800px; /* Maximum height for larger screens */
-    
-    background-image: url('/background.png'); /* Your background image */
-    background-size: cover; /* Ensure the background image fits within the card */
-    background-position: center; /* Center the image within the container */
-    background-repeat: no-repeat; /* No repeat */
-    background-attachment: fixed; /* Keeps the background stationary */
-    
-    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Optional: Add a shadow to make it look like a card */
-    z-index: 200; /* Z-index to control layering */
+    transform: translate(-50%, -50%); /* Center the background */
+    width: 100vw; /* 90% of the viewport width */
+    height: 200vw; /* 90% of the viewport height */
+    max-width: 400px; /* Limit the width so it doesn’t stretch too wide */
+    max-height: 730px; /* Limit the height */
+    background-image: url('/background.png'); /* Add background image */
+    background-size: cover; /* Ensure the background image covers the area */
+    background-position: center; /* Center the background image */
+    border-radius: 10px; /* Optional: Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Optional: shadow */
+    z-index: 1001;
+}
+}
+@media (width: 360px) {
+  .background {
+    position: absolute; /* This makes the background fill the wrapper */
+    top: 50%; 
+    left: 50%;
+    transform: translate(-50%, -50%); /* Center the background */
+    width: 150vw; /* 90% of the viewport width */
+    height: 200vw; /* 90% of the viewport height */
+    max-width: 550px; /* Limit the width so it doesn’t stretch too wide */
+    max-height: 730px; /* Limit the height */
+    background-image: url('/background.png'); /* Add background image */
+    background-size: cover; /* Ensure the background image covers the area */
+    background-position: center; /* Center the background image */
+    border-radius: 10px; /* Optional: Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Optional: shadow */
+    z-index: 1001; /* Ensure the background stays behind the canvas */
   }
-  
-  /* Adjust layout for smaller devices */
-  @media (max-width: 768px) {
-    .background {
-      width: 95vw; /* Allow more width on smaller screens */
-      height: 85vh; /* Slightly reduce height for smaller devices */
-    }
-  }
-  
-  @media (max-width: 480px) {
-    .background {
-      width: 100vw; /* Full width for very small screens */
-      height: 90vh; /* Keep height proportional */
-      box-shadow: none; /* Remove shadow on small screens for simpler look */
-    }
-  }
+}
   
   
 .help {
@@ -109,17 +140,13 @@
   }
 
 
-  /* Full-screen overlay */
-
-
-/* Full-screen overlay */
 .overlay {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: rgba(0, 0, 0, 0.7); /* Semi-transparent background */
+  background: rgba(0, 0, 0, 0.7); 
   display: flex;
   justify-content: center;
   align-items: center;
@@ -129,7 +156,6 @@
   padding:20px;
 }
 
-/* Overlay content styling */
 .overlayContent {
   background: #ffffff;
   padding: 30px;
@@ -139,7 +165,6 @@
   animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Game over title */
 .overlayContent h2 {
   color: #383838; /* Game Over text color */
   font-size: 36px;
@@ -194,10 +219,10 @@
 
 
 .leaderboardContainer {
-  position: fixed;
+  position: absolute;
   bottom: 10px;
   right: 10px;
-  z-index: 1000;
+  z-index: 1002;
 }
 
 .leaderboardContainer h2 {
@@ -281,10 +306,10 @@
 
 /* Styles for the info icon container */
 .iconContainer {
-  position: fixed;
+  position: absolute;
   bottom: 10px;
-  right: 20px;
-  z-index: 1000;
+  right: 5%;
+  z-index: 1005;
 }
 
 /* Icon styles */
@@ -336,21 +361,29 @@
   background-color: #cc0000;
 }
 
+
+.gameCanvas {
+  .gameCanvas {
+    width: 90vw; /* 90% of the viewport width */
+    height: 90vh; /* 90% of the viewport height */
+    max-width: 800px; /* Limit the max size for larger screens */
+    max-height: 600px;
+    position: relative;
+    display: block;
+    z-index: 100; /* Ensure the game canvas is above other elements */
+  }
+
+}
+
 .gameContainer {
-  width: 90vw; /* 90% of the viewport width */
-  height: 90vh; /* 90% of the viewport height */
-  max-width: 800px; /* Maximum width to prevent it from getting too large */
-  max-height: 600px; /* Maximum height to prevent it from getting too large */
-  
-  background-color: #fff; /* Optional: Add background color for the container */
-  margin: 0 auto; /* Center the container horizontally */
-  position: relative; /* Positioning for game elements */
-  
-  display: flex; /* Use flexbox to center content */
-  justify-content: center; /* Center content horizontally */
-  align-items: center; /* Center content vertically */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3); /* Optional: Add shadow */
-  border-radius: 10px; /* Optional: Add rounded corners */
+  position: relative;
+  width: 100vw; /* Full viewport width */
+  height: 100vh; /* Full viewport height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  overflow: hidden; /* Prevent elements from overflowing */
+  background-color: #f0f0f0;
 }
 
 /* Adjust layout for smaller screens */

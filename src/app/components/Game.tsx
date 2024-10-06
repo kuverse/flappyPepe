@@ -15,14 +15,14 @@ const PIPE_WIDTH = 50;
 const PIPE_SPACING = 235;
 const PIPE_HEIGHT_VARIATION = 80;
 const PIPE_GAP = 260; 
-const hitboxWidth = 50;  
+const hitboxWidth = 40;  
 const hitboxHeight = 80; 
-const hitboxOffsetX = 20;
-const hitboxOffsetY = 10;
+const hitboxOffsetX = 30;
+const hitboxOffsetY = -10;
 const PIPE_MIN_HEIGHT = 40; 
 const PIPE_MAX_HEIGHT = 300;
 const baseSpeed = 3;
-const canvasHeight = 620;
+const canvasHeight = 600;
 const canvasWidth = 400;
 
 
@@ -51,7 +51,7 @@ const FlappyPepe: React.FC = () => {
   const [score, setScore] = useState(0);
   const [finalScore, setFinalScore] = useState<number | null>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
-  const currentSpeed = baseSpeed + score * 0.1;
+  const currentSpeed = baseSpeed + score * 0.05;
   const [gameStarted, setGameStarted] = useState(false);
   const jumpSound = new Howl({ src: ["/flap2.wav"], volume: 0.1,});
   const gameOverSound = new Howl({ src: ["/death.mp3"],volume: 0.07, });
@@ -62,41 +62,45 @@ const FlappyPepe: React.FC = () => {
     setScore((prevScore) => prevScore + 1);
   }, []);
 
+
+
+
   useEffect(() => {
     if (typeof window !== 'undefined') {
+      const positionMap = [
+        { minWidth: 1200, top: '40%', left: '43%' },
+        { minWidth: 1000, top: '40%', left: '40%' },
+        { minWidth: 900, top: '40%', left: '39%' },
+        { minWidth: 800, top: '40%', left: '37%' },
+        { minWidth: 700, top: '40%', left: '35%' },
+        { minWidth: 600, top: '40%', left: '32%' },
+        { minWidth: 400, top: '40%', left: '30%' },
+        { minWidth: 300, top: '40%', left: '20%' },
+        { minWidth: 0, top: '40%', left: '10%' }
+      ];
+  
       const handleResize = () => {
-        const screenWidth = window.innerWidth;
+        const screenWidth = window.visualViewport ? window.visualViewport.width : window.innerWidth;
+        const devicePixelRatio = window.devicePixelRatio || 1;
+        
+        //console.log(`Screen width: ${screenWidth}, DPR: ${devicePixelRatio}`);
+        
+  
         const birdElement = document.querySelector(`.${styles["pepe-animation"]}`) as HTMLElement | null;
   
         if (birdElement) {
           birdElement.style.position = 'absolute';
-        
-          if (screenWidth > 1200) {
-            birdElement.style.top = '40%';
-            birdElement.style.left = '41%';
-          }   else if (screenWidth > 1000) {
-            birdElement.style.top = '40%';
-            birdElement.style.left = '40%';
-          } 
-          else if (screenWidth > 800) {
-            birdElement.style.top = '40%';
-            birdElement.style.left = '37%';
-          } 
-          else if (screenWidth > 700) {
-            birdElement.style.top = '40%';
-            birdElement.style.left = '35%';
-          } 
-          else if (screenWidth > 600) {
-            birdElement.style.top = '40%';
-            birdElement.style.left = '32%';
-          } else {
-            birdElement.style.top = '40%';
-            birdElement.style.left = '25%';
+          
+          for (const position of positionMap) {
+            if (screenWidth > position.minWidth) {
+              birdElement.style.top = position.top;
+              birdElement.style.left = position.left;
+              break;
+            }
           }
         } else {
           console.error('Bird element not found');
         }
-        
       };
   
       window.addEventListener('resize', handleResize);
@@ -108,6 +112,10 @@ const FlappyPepe: React.FC = () => {
       };
     }
   }, []);
+
+
+
+  
   
   
   useEffect(() => {
@@ -119,16 +127,11 @@ const FlappyPepe: React.FC = () => {
     }
   }, []);
 
-  // Whenever scores change, save them to localStorage
   useEffect(() => {
     if (scores.length > 0) { // Only save if there are scores to save
       localStorage.setItem('scores', JSON.stringify(scores));
     }
   }, [scores]);
-  
-  
-  
-
 
   const resetGame = () => {
     setBird({ x: 100, y: 250, velocity: 0 });
@@ -153,7 +156,6 @@ const FlappyPepe: React.FC = () => {
 }, [gameStarted, isGameOver, jumpSound, resetGame]);
 
 
-
 const handleGameOver = useCallback(() => {
   setIsGameOver(true);
   gameOverSound.play();
@@ -165,11 +167,6 @@ const handleGameOver = useCallback(() => {
 }, [score, gameOverSound]);
 
 
-
-
-
-
-
   const updateGame = useCallback(() => {
     setBird((prevBird) => {
       const newY = prevBird.y + prevBird.velocity;
@@ -178,8 +175,7 @@ const handleGameOver = useCallback(() => {
       if (newY > 480 || newY < 0) {
         if (!isGameOver) {
           handleGameOver();
-        }
-        
+        } 
       }
       return { ...prevBird, y: newY, velocity: newVelocity };
     });
@@ -198,27 +194,24 @@ const handleGameOver = useCallback(() => {
 
         const randomHeight = Math.random() * (PIPE_MAX_HEIGHT - PIPE_MIN_HEIGHT) + PIPE_MIN_HEIGHT;
 
-          updatedPipes.push({
-            x: updatedPipes.length
-              ? updatedPipes[updatedPipes.length - 1].x + PIPE_SPACING
-              : 400, // Default starting position for the new pipe
+          updatedPipes.push({ x: updatedPipes.length ? updatedPipes[updatedPipes.length - 1].x + PIPE_SPACING : 400, 
             height: randomHeight,
             color: pipeColor,
-            passed: false, // Reset 'passed' status
+            passed: false,
           });
         }
 
       updatedPipes.forEach((pipe) => {
         if (pipe.x + PIPE_WIDTH < bird.x && !pipe.passed) {
-          incrementScore();// Increment score when passing a pipe
-          pipe.passed = true; // Mark pipe as passed
+          incrementScore();
+          pipe.passed = true;
         }
 
         if (
-            bird.x + hitboxOffsetX + hitboxWidth > pipe.x && // Adjusted bird's hitbox width
-            bird.x + hitboxOffsetX < pipe.x + PIPE_WIDTH && // Adjusted bird's hitbox x position
-            (bird.y + hitboxOffsetY < pipe.height || // Adjusted bird's hitbox height
-             bird.y + hitboxOffsetY + hitboxHeight > pipe.height + PIPE_GAP) // Adjusted bird's hitbox height
+            bird.x + hitboxOffsetX + hitboxWidth > pipe.x &&
+            bird.x + hitboxOffsetX < pipe.x + PIPE_WIDTH &&
+            (bird.y + hitboxOffsetY < pipe.height ||
+             bird.y + hitboxOffsetY + hitboxHeight > pipe.height + PIPE_GAP)
           ) {
             handleGameOver();
           
@@ -262,21 +255,20 @@ const handleGameOver = useCallback(() => {
 
   
 
+
+
+
   useEffect(() => {
     const canvas = canvasRef.current;
     const ctx = canvas?.getContext("2d");
 
-
-    
     if (ctx && canvas ) {
       ctx.imageSmoothingEnabled = false; 
       ctx.clearRect(0, 0, canvas.width, canvas.height);
   
-      // Draw the background
       ctx.fillStyle = "#ADD8E6";
       ctx.fillRect(0, 0, canvas.width, canvas.height);
   
-      // Draw the pipes
       pipes.forEach((pipe) => {
         ctx.fillStyle = pipe.color;
         ctx.fillRect(pipe.x, 0, PIPE_WIDTH, pipe.height); // Upper pipe
@@ -285,49 +277,53 @@ const handleGameOver = useCallback(() => {
   
   
   
-      {/*// Draw the hitbox (red square)
+      
       ctx.strokeStyle = "red";
       ctx.lineWidth = 2;
+
       ctx.strokeRect(
-        bird.x + hitboxOffsetX,  // X position of the hitbox
-        bird.y + hitboxOffsetY,  // Y position of the hitbox
-        hitboxWidth,             // Width of the hitbox
-        hitboxHeight             // Height of the hitbox
+        bird.x + hitboxOffsetX,  
+        bird.y + hitboxOffsetY,  
+        hitboxWidth,             
+        hitboxHeight             
       );
-      */}
-      // Draw the score
-     // Draw the score
+      
+
       ctx.fillStyle = "white";
       ctx.font = "45px Arial";
-      ctx.textAlign = "center"; // Align text to the center
-      ctx.fillText(`Score: ${score}`, canvas.width / 2, 110); // Center horizontally
+      ctx.textAlign = "center"; 
+      ctx.fillText(`Score: ${score}`, canvas.width / 2, 100);
 
     }
   
      
-  }, [ pipes, score]);
+  }, [ pipes, score, bird.x, bird.y]);
   
 
-  
   return (
     <div style={{ textAlign: "center", padding: '50px', marginTop: '25px'}}>
 
       {gameStarted && (<BackgroundMusic />)}
 
 
-    <div className="gamContainer" style={{ position: "relative" }}>
-
-      <canvas ref={canvasRef} width={canvasWidth} height={canvasHeight} style={{ border: "1px solid black" }} />
+      <div className="background-wrapper">
+      <div className="background">
+      <canvas className="gameCanvas" ref={canvasRef} width={canvasWidth} height={canvasHeight} style={{ border: "1px solid black" }} />
       <div
         className={isGameOver ? styles.pepeStatic : styles["pepe-animation"]}
         style={{
-          position: "absolute", // Stays within the relative parent of the canvas
-          top: bird.y  + "px",  // Same as canvas hitbox
-          left: bird.x  + "px", // Same as canvas hitbox
-          
+          position: "absolute",
+          top: bird.y + 50 + "px",
+          left: bird.x  + "px",
+          width: "100px",
+          height: "100px",
+          pointerEvents: isGameOver ? 'none' : 'auto',
+          zIndex: 0,
         }}
-      ></div>
-       </div>
+      >
+        
+      </div>
+       </div></div>
        
        <GameOverOverlay
           isGameOver={isGameOver}
