@@ -1,43 +1,46 @@
 import { useEffect, useState } from 'react';
-import { Howl } from 'howler';
+import { backgroundMusic } from './Sounds'; // Import the background music instance
 import { FaMusic, FaVolumeMute } from 'react-icons/fa';
 
 const BackgroundMusic = () => {
-  const [music, setMusic] = useState<Howl | null>(null); // Store the Howl instance
   const [isMuted, setIsMuted] = useState(false); // Track mute state
 
   useEffect(() => {
-    const musicInstance = new Howl({
-      src: ['/babypepe.mp3'],
-      loop: true,
-      volume: 0.25,
-    });
+    // Play background music when the component mounts
+    backgroundMusic.play();
 
-    musicInstance.play();
-    setMusic(musicInstance); // Store the music instance in state
-
+    // Cleanup when component unmounts
     return () => {
-      musicInstance.stop();
+      backgroundMusic.stop();
     };
   }, []);
 
-  // Toggle mute/unmute
+  // Toggle mute/unmute for background music
   const toggleMute = () => {
-    if (music) {
-      if (isMuted) {
-        music.mute(false); // Unmute the music
-      } else {
-        music.mute(true); // Mute the music
-      }
-      setIsMuted(!isMuted); // Toggle mute state
-    }
+    setIsMuted((prevMuted) => {
+      const newMutedState = !prevMuted;
+      backgroundMusic.mute(newMutedState);
+      return newMutedState;
+    });
   };
 
   return (
-    <div style={{ position: "fixed", padding: '10px', zIndex: "2000", bottom: "4%", left: "1%"}}>
+    <div style={{ position: "fixed", padding: '10px', zIndex: "2000", bottom: "4%", left: "1%" }}>
       {/* Mute/Unmute Button */}
-      <button onClick={toggleMute} style={{ padding: '10px', fontSize: '16px', zIndex: "2000", backgroundColor: "lightgreen", borderRadius: "10px", color: "white"}}>
-      {isMuted ?  <FaMusic /> : <FaVolumeMute /> }
+      <button
+        onClick={toggleMute}
+        style={{
+          padding: '10px',
+          fontSize: '24px',
+          zIndex: "2000",
+          backgroundColor: isMuted ? "lightgreen" : "red",
+          color: "white",
+          border: "none",
+          cursor: "pointer",
+          borderRadius: "10px"
+        }}
+      >
+        {isMuted ? <FaMusic /> : <FaVolumeMute /> }
       </button>
     </div>
   );

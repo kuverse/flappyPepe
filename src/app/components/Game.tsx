@@ -7,6 +7,7 @@ import GameOverOverlay from "./GameoverOverlay";
 import Leaderboard from "./Leaderboard";
 import InfoPopup from "./Info";
 import CloudCanvas from "./Clouds";
+import { playJumpSound, playGameOverSound, playDrinkBottleSound } from './Sounds';
 
 
 const GRAVITY = 0.4;
@@ -49,14 +50,8 @@ const FlappyPepe: React.FC = () => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
 
   const [baseSpeed, setBaseSpeed] = useState(gamebaseSpeed);
-
   const currentSpeed = baseSpeed + score * 0.05;
   const [gameStarted, setGameStarted] = useState(false);
-
-const jumpSound = new Howl({ src: ["/flap2.wav"], volume: 0.1, preload: true });
-const gameOverSound = new Howl({ src: ["/death.mp3"], volume: 0.07, preload: true });
-const drinkBottle = new Howl({ src: ["/drink.mp3"], volume: 0.07, preload: true });
-
   const [scores, setScores] = useState<number[]>([]); // State to store the scores
   const [coin, setCoin] = useState<{ x: number, y: number } | null>(null); // Single coin at a time
   const [coinImage, setCoinImage] = useState<HTMLImageElement | null>(null); // Store the coin image
@@ -66,11 +61,6 @@ const drinkBottle = new Howl({ src: ["/drink.mp3"], volume: 0.07, preload: true 
     setScore((prevScore) => prevScore + 1);
   }, []);
 
-  const resumeAudioContext = () => {
-    if (Howler.ctx && Howler.ctx.state === 'suspended') {
-      Howler.ctx.resume();
-    }
-  };
 
   useEffect(() => {
     const img = new Image();
@@ -163,25 +153,23 @@ const drinkBottle = new Howl({ src: ["/drink.mp3"], volume: 0.07, preload: true 
         setGameStarted(true);
       }
     if (!isGameOver) {
-        resumeAudioContext();
-        jumpSound.play();
+      playJumpSound();
       setBird((prevBird) => ({ ...prevBird, velocity: JUMP_STRENGTH }));
     } else {
       resetGame();
     }
-}, [gameStarted, isGameOver, jumpSound, resetGame]);
+}, [gameStarted, isGameOver, resetGame]);
 
 
 const handleGameOver = useCallback(() => {
   setIsGameOver(true);
-  resumeAudioContext();
-  gameOverSound.play();
+  playGameOverSound();
   setFinalScore(score);
   setScores((prevScores) => {
     const updatedScores = [...prevScores, score];
     return updatedScores.sort((a, b) => b - a).slice(0, 5);
   });
-}, [score, gameOverSound]);
+}, [score]);
 
 
   const updateGame = useCallback(() => {
@@ -306,8 +294,7 @@ const handleGameOver = useCallback(() => {
         ) {
           setCoin(null);
           console.log("Coin collected!");
-          resumeAudioContext();
-          drinkBottle.play();
+          playDrinkBottleSound();
           incrementScore();
           setBaseSpeed(baseSpeed * 0.95);
           
@@ -405,7 +392,7 @@ const handleGameOver = useCallback(() => {
     <InfoPopup/>
     
     </div>
-    <BackgroundMusic />
+    <BackgroundMusic  />
 
     </>
   );
