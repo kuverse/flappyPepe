@@ -34,9 +34,9 @@ const BackgroundMusic = () => {
   };
 
   return (
-    <div style={{ position: "fixed", padding: '10px', zIndex: "2000", top: "4%", right: "4%"}}>
+    <div style={{ position: "fixed", padding: '10px', zIndex: "2000", bottom: "4%", left: "1%"}}>
       {/* Mute/Unmute Button */}
-      <button onClick={toggleMute} style={{ padding: '10px', fontSize: '16px', zIndex: "2000", backgroundColor: "lightgreen", borderRadius: "10px"}}>
+      <button onClick={toggleMute} style={{ padding: '10px', fontSize: '16px', zIndex: "2000", backgroundColor: "lightgreen", borderRadius: "10px", color: "white"}}>
       {isMuted ?  <FaMusic /> : <FaVolumeMute /> }
       </button>
     </div>
