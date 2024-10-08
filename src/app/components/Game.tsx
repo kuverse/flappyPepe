@@ -9,8 +9,8 @@ import CloudCanvas from "./Clouds";
 import { playJumpSound, playGameOverSound, playDrinkBottleSound } from './Sounds';
 
 
-const GRAVITY = 0.4;
-const JUMP_STRENGTH = -8;
+const GRAVITY = 0.38;
+const JUMP_STRENGTH = -7.5;
 const PIPE_WIDTH = 50;
 const PIPE_SPACING = 235;
 const PIPE_HEIGHT_VARIATION = 80;
@@ -22,7 +22,7 @@ const hitboxOffsetY = -10;
 const PIPE_MIN_HEIGHT = 40; 
 const PIPE_MAX_HEIGHT = 300;
 const gamebaseSpeed = 3;
-const canvasHeight = 600;
+const canvasHeight = 580;
 const canvasWidth = 400;
 
 interface Bird {
@@ -176,7 +176,7 @@ const handleGameOver = useCallback(() => {
       const newY = prevBird.y + prevBird.velocity;
       const newVelocity = prevBird.velocity + GRAVITY;
 
-      if (newY > 580 || newY < 0) {
+      if (newY > 580 || newY < -100) {
         if (!isGameOver) {
           handleGameOver();
         } 
@@ -348,7 +348,7 @@ const handleGameOver = useCallback(() => {
         console.log("No valid pipe found. Generated coin at random position:", randomX, randomY);
       }
     };
-    const interval = setInterval(generateCoin, 5500);
+    const interval = setInterval(generateCoin, 4000);
     return () => clearInterval(interval);
   }, []);
 
