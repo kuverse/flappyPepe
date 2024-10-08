@@ -32,7 +32,8 @@
 }
 
 .background {
-  position: absolute; /* This makes the background fill the wrapper */
+  position: absolute; 
+  margin-top: 5px;/* This makes the background fill the wrapper */
   top: 50%; 
   left: 50%;
   transform: translate(-50%, -50%); /* Center the background */
