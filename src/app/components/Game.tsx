@@ -22,7 +22,7 @@ const hitboxOffsetY = -10;
 const PIPE_MIN_HEIGHT = 40; 
 const PIPE_MAX_HEIGHT = 300;
 const gamebaseSpeed = 3;
-const canvasHeight = 600;
+const canvasHeight = 610;
 const canvasWidth = 400;
 
 interface Bird {
