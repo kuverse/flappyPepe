@@ -12,7 +12,7 @@ import { playJumpSound, playGameOverSound, playDrinkBottleSound } from './Sounds
 const GRAVITY = 0.38;
 const JUMP_STRENGTH = -7.5;
 const PIPE_WIDTH = 50;
-const PIPE_SPACING = 235;
+const PIPE_SPACING = 245;
 const PIPE_HEIGHT_VARIATION = 80;
 const PIPE_GAP = 265; 
 const hitboxWidth = 40;  
@@ -137,7 +137,8 @@ const FlappyPepe: React.FC = () => {
     }
   }, [scores]);
 
-  const resetGame = () => {
+
+const resetGame = useCallback(() => {
     setBird({ x: 100, y: 250, velocity: 0 });
     setPipes([{ x: 400, height: Math.random() * PIPE_HEIGHT_VARIATION + 100, passed: false, color: pipeColor }]);
     setIsGameOver(false);
@@ -145,7 +146,9 @@ const FlappyPepe: React.FC = () => {
     setFinalScore(null);
     setGameStarted(false);
     setBaseSpeed(gamebaseSpeed);
-  };
+    setCoin(null);
+}, [pipeColor]);
+
 
   const handleJump = useCallback(() => {
     if (!gameStarted) {
@@ -224,7 +227,7 @@ const handleGameOver = useCallback(() => {
 
       return updatedPipes;
     });
-  }, [bird, score]);
+  }, [bird, currentSpeed, handleGameOver, incrementScore,isGameOver, pipeColor]);
 
 
   useEffect(() => {
@@ -325,36 +328,58 @@ const handleGameOver = useCallback(() => {
       ctx.fillText(`Score: ${score}`, canvas.width / 2, 100);
 
     }
-  }, [ pipes, score, bird.x, bird.y, coin]);
+  }, [ pipes, score, bird.x, bird.y, coin, baseSpeed, coinImage, currentSpeed, incrementScore]);
   
 
   useEffect(() => {
     const generateCoin = () => {
       const canvas = canvasRef.current;
-      if (!canvas) return;
-
-      const pipe = pipes.find((p) => p.x + PIPE_WIDTH > 0); // Pipe on the screen
-
-      if (pipe) {
-        const coinX = pipe.x + 45; 
-
-        const coinY = Math.random() * (canvas.height - 100);
-
-        setCoin({ x: coinX, y: coinY });
-      } else {
-        const randomX = canvas.width + 50; // Generate coin slightly off-screen to the right
-        const randomY = Math.random() * (canvas.height - 100) + 50; // Random vertical position
-        setCoin({ x: randomX, y: randomY });
-        console.log("No valid pipe found. Generated coin at random position:", randomX, randomY);
+      if (!canvas) {
+        console.warn("Canvas is not available");
+        return;
       }
+  
+      console.log("Canvas dimensions:", canvas.width, canvas.height);
+  
+      // Generate the coin off-screen to the right
+      const randomX = canvas.width + 50; // Always off-screen
+      const randomY = Math.random() * (canvas.height - 100) + 50; // Random vertical position
+  
+      setCoin({ x: randomX, y: randomY });
+      console.log("Generated coin at:", randomX, randomY);
     };
-    const interval = setInterval(generateCoin, 4000);
+    
+    const interval = setInterval(generateCoin, 5000);
     return () => clearInterval(interval);
   }, []);
+  
 
 
+
+
+  useEffect(() => {
+    const moveCoin = () => {
+      setCoin((prevCoin) => {
+        if (!prevCoin) return prevCoin;
+  
+        const newX = prevCoin.x; // Move coin left
+  
+        // If the coin moves off-screen, remove it
+        if (newX + 50 < 0) {
+          return null;
+        }
+  
+        return { ...prevCoin, x: newX };
+      });
+    };
+  
+    const interval = setInterval(moveCoin, 16); // Runs approximately at 60 FPS
+    return () => clearInterval(interval);
+  });
+  
 
   return (<>
+
     <div style={{ textAlign: "center", padding: '50px', marginTop: '25px'}}>
 
 
