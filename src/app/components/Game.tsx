@@ -369,7 +369,9 @@ const handleGameOver = useCallback(() => {
   });
   
 
-  return (<>
+  return (
+  
+  <>
 
     <div style={{ textAlign: "center", padding: '50px', marginTop: '25px'}}>
       <div className="background-wrapper">
@@ -389,6 +391,8 @@ const handleGameOver = useCallback(() => {
       >
         
       </div>
+
+      
        </div></div>
        
        <GameOverOverlay

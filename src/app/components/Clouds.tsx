@@ -73,7 +73,7 @@ const CloudCanvas = () => {
         top: '50%',
         left: '50%',
         transform: "translate(-50%, -50%)",
-        width: "400px",
+        width: "400px", // Match game canvas width
         height: "610px",
         pointerEvents: "none",
       }}
