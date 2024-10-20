@@ -1,10 +1,9 @@
 "use client";
 import { useEffect, useState, useRef, useCallback } from "react";
-import BackgroundMusic from "./Music";
+//import BackgroundMusic from "./Music";
 import styles from "../style/animation.module.css";
 import GameOverOverlay from "./GameoverOverlay";
-import Leaderboard from "./Leaderboard";
-import InfoPopup from "./Info";
+//import Leaderboard from "./Leaderboard";
 import CloudCanvas from "./Clouds";
 import { playJumpSound, playGameOverSound, playDrinkBottleSound } from './Sounds';
 
@@ -40,7 +39,7 @@ interface Pipe {
 
 const FlappyPepe: React.FC = () => {
   const [bird, setBird] = useState<Bird>({ x: 100, y: 250, velocity: 0 });
-  const generateRandomColor = () => (Math.random() > 0.5 ? "green" : "red");
+  const generateRandomColor = () => (Math.random() > 0.5 ? "#156D30" : "#A02E00");
   const pipeColor = generateRandomColor();
   const [pipes, setPipes] = useState<Pipe[]>([{ x: 400, height: Math.random() * PIPE_HEIGHT_VARIATION + 100, passed: false, color: pipeColor },]);
   const [isGameOver, setIsGameOver] = useState(false);
@@ -57,8 +56,10 @@ const FlappyPepe: React.FC = () => {
 
 
   const incrementScore = useCallback(() => {
+    if(gameStarted) {
     setScore((prevScore) => prevScore + 1);
-  }, []);
+    }
+  }, [gameStarted]);
 
 
   useEffect(() => {
@@ -260,9 +261,6 @@ const handleGameOver = useCallback(() => {
   }, [handleJump]);
   
 
-  
-
-
 
 
   useEffect(() => {
@@ -322,8 +320,8 @@ const handleGameOver = useCallback(() => {
       );
       */}
 
-      ctx.fillStyle = "white";
-      ctx.font = "45px Arial";
+      ctx.fillStyle = "#A02E00";
+      ctx.font = "40px PepeFont";
       ctx.textAlign = "center"; 
       ctx.fillText(`Score: ${score}`, canvas.width / 2, 100);
 
@@ -354,9 +352,6 @@ const handleGameOver = useCallback(() => {
   }, []);
   
 
-
-
-
   useEffect(() => {
     const moveCoin = () => {
       setCoin((prevCoin) => {
@@ -381,9 +376,6 @@ const handleGameOver = useCallback(() => {
   return (<>
 
     <div style={{ textAlign: "center", padding: '50px', marginTop: '25px'}}>
-
-
-
       <div className="background-wrapper">
       <div className="background">
       <canvas className="gameCanvas" ref={canvasRef} width={canvasWidth} height={canvasHeight} style={{ border: "1px solid black" }} />
@@ -410,13 +402,11 @@ const handleGameOver = useCallback(() => {
         />
 
 
-    <div className={styles.background} />
+    {/*<div className={styles.background} />*/}
     <CloudCanvas />
-    <Leaderboard scores={scores} />
-    <InfoPopup/>
-    
+    {/*<Leaderboard scores={scores} />*/}
     </div>
-    <BackgroundMusic  />
+    {/*<BackgroundMusic  />*/}
 
     </>
   );

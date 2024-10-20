@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
 import { FaInfoCircle } from 'react-icons/fa'; // Import the info icon from React Icons
 import styles from '../style/animation.module.css'; // Import the CSS module
+import Image from 'next/image';
+
 
 const InfoPopup = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -29,7 +31,7 @@ const InfoPopup = () => {
           <h2 style={{ marginBottom: '10px', fontSize: '24px', color: '#333' }}>Flappy Baby Pepe v0.2</h2>
           <h3 style={{ marginBottom: '20px', fontSize: '20px', color: '#555' }}>flap. flap. flap.</h3>
 
-          <img 
+          <Image 
             src="/output.gif" 
             width="100" 
             height="100" 

@@ -54,15 +54,14 @@ const CloudCanvas = () => {
         });
       };
 
-      // Animation loop
       const animate = () => {
-        ctx.clearRect(0, 0, canvas.width, canvas.height); // Clear canvas
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
         drawClouds(ctx);
-        requestAnimationFrame(animate); // Continue the animation
+        requestAnimationFrame(animate);
       };
 
-      canvas.width = 800;
-      canvas.height = 600;
+      canvas.width = 400;
+      canvas.height = 610;
     }
   }, []);
 
@@ -71,8 +70,11 @@ const CloudCanvas = () => {
       ref={canvasRef}
       style={{
         position: "absolute",
-        top: 0,
-        left: 0,
+        top: '50%',
+        left: '50%',
+        transform: "translate(-50%, -50%)",
+        width: "400px",
+        height: "610px",
         pointerEvents: "none",
       }}
     />
