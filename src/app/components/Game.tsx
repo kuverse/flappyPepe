@@ -6,7 +6,6 @@ import GameOverOverlay from "./GameoverOverlay";
 //import Leaderboard from "./Leaderboard";
 import CloudCanvas from "./Clouds";
 import { playJumpSound, playGameOverSound, playDrinkBottleSound } from './Sounds';
-import Image from "next/image";
 
 const GRAVITY = 0.38;
 const JUMP_STRENGTH = -7.5;
@@ -374,18 +373,8 @@ const handleGameOver = useCallback(() => {
   <>
 
     <div style={{ textAlign: "center", padding: '50px', marginTop: '25px'}}>
-      <div className="background-wrapper">
+      <div className={styles.gameWrapper}>
 
-      <Image
-        src="/arcademachine.png" // Adjust the path if needed
-        alt="Arcade Machine"
-        layout="fill" // Fill the parent container
-        objectFit="contain" // Keep the aspect ratio
-        priority
-        className={styles.arcadeMachine}
-      />
-
-        
       <div className="background">
       <canvas className="gameCanvas" ref={canvasRef} width={canvasWidth} height={canvasHeight} style={{ border: "1px solid black" }} />
       <div

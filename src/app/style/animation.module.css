@@ -25,7 +25,7 @@
   }
 
 
-.background-wrapper {
+.gameWrapper {
   display: flex;
   justify-content: center;
   align-items: center;
@@ -105,7 +105,7 @@
   top: 0;
   left: 0;
   width: 100%; /* Ensure it fills the wrapper */
-  height: 100%;
+  height: 120%;
   z-index: 5000; /* Ensure it’s on top */
   pointer-events: none; /* Allow interactions through to canvas */
 }
@@ -279,8 +279,9 @@
 /* Full-screen overlay for the leaderboard */
 .overlay {
   position: absolute;
+  margin-top: 6px;
   width: 400px;
-  height: 610px;
+  height: 615px;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
