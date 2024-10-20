@@ -98,6 +98,17 @@
   }
 }
   
+
+
+.arcadeMachine {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%; /* Ensure it fills the wrapper */
+  height: 100%;
+  z-index: 5000; /* Ensure it’s on top */
+  pointer-events: none; /* Allow interactions through to canvas */
+}
   
 .help {
   font-size: 2px;
