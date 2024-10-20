@@ -167,9 +167,11 @@
 }
 
 .overlayContent h2 {
-  color: #6CB947; /* Game Over text color */
-  font-size: 36px;
+  color: #A02E00; /* Game Over text color */
+  font-size: 38px;
   margin-bottom: 20px;
+  font-family: 'PepeFont', sans-serif;
+
 }
 
 /* Final score */
@@ -181,7 +183,7 @@
 
 /* Restart button styling */
 .restartButton {
-  padding: 10px 20px;
+  padding: 10px 50px;
   background-color: #DB623B;
   color: white;
   border: none;
@@ -189,16 +191,18 @@
   font-size: 28px;
   cursor: pointer;
   transition: background-color 0.3s;
+  font-family: 'PepeFont', sans-serif;
+
 }
 
 .restartButton:hover {
-  background-color: #cc0000;
+  background-color: #A02E00;
 }
 
 
 .overlayContent .restartInstructions {
   font-size: 15px;
-  color: #6CB947;
+  color: #A02E00;
 }
 
 /* Additional instructions */
@@ -263,17 +267,18 @@
 
 /* Full-screen overlay for the leaderboard */
 .overlay {
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: center;
+  position: absolute;
+  width: 400px;
+  height: 610px;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   z-index: 9999; /* On top of everything */
   padding: 20px;
+  background-color: #DB623B;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Optional: Add a shadow for styling */
 }
+
 
 /* Content box inside the overlay */
 .leaderboardContent {

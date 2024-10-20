@@ -304,10 +304,6 @@ const handleGameOver = useCallback(() => {
           setCoin(null);
         }
       }
-
-
-
-  
       {/*}
       ctx.strokeStyle = "red";
       ctx.lineWidth = 2;
@@ -320,7 +316,7 @@ const handleGameOver = useCallback(() => {
       );
       */}
 
-      ctx.fillStyle = "#A02E00";
+      ctx.fillStyle = "#6CB947";
       ctx.font = "40px PepeFont";
       ctx.textAlign = "center"; 
       ctx.fillText(`Score: ${score}`, canvas.width / 2, 100);
