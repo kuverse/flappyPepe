@@ -10,7 +10,7 @@ const GameOverOverlay = ({ isGameOver, finalScore, onRestart }: { isGameOver: bo
         <div className={styles.overlay}>
           <div className={styles.overlayContent}>
           <Image src="/deadpepe.png" width="80" height="80" alt="Example Image" />
-          <h2>Try Again?</h2>
+          <h2>Play Again?</h2>
             <p>Final Score: {finalScore}</p>
             <button className={styles.restartButton} onClick={onRestart}>Play</button>
             <br></br>
