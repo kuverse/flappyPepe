@@ -336,14 +336,14 @@ const handleGameOver = useCallback(() => {
         return;
       }
   
-      console.log("Canvas dimensions:", canvas.width, canvas.height);
+      //console.log("Canvas dimensions:", canvas.width, canvas.height);
   
       // Generate the coin off-screen to the right
       const randomX = canvas.width + 50; // Always off-screen
       const randomY = Math.random() * (canvas.height - 100) + 50; // Random vertical position
   
       setCoin({ x: randomX, y: randomY });
-      console.log("Generated coin at:", randomX, randomY);
+      //console.log("Generated coin at:", randomX, randomY);
     };
     
     const interval = setInterval(generateCoin, 5000);
