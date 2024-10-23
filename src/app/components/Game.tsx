@@ -151,7 +151,7 @@ const resetGame = useCallback(() => {
 
 
   const handleJump = useCallback(() => {
-    if (!gameStarted) {
+    if (!gameStarted || isGameOver) {
         setGameStarted(true);
       }
     if (!isGameOver) {
@@ -327,7 +327,7 @@ const handleGameOver = useCallback(() => {
 
   useEffect(() => {
 
-    if (!gameStarted) return;
+    if (!gameStarted || isGameOver) return;
 
     const generateCoin = () => {
       const canvas = canvasRef.current;
@@ -348,7 +348,7 @@ const handleGameOver = useCallback(() => {
     
     const interval = setInterval(generateCoin, 5000);
     return () => clearInterval(interval);
-  }, [gameStarted]);
+  }, [gameStarted, isGameOver]);
   
 
   useEffect(() => {
