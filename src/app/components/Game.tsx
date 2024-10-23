@@ -40,7 +40,7 @@ const FlappyPepe: React.FC = () => {
   const [bird, setBird] = useState<Bird>({ x: 100, y: 250, velocity: 0 });
   const generateRandomColor = () => (Math.random() > 0.5 ? "#156D30" : "#A02E00");
   const pipeColor = generateRandomColor();
-  const [pipes, setPipes] = useState<Pipe[]>([{ x: 400, height: Math.random() * PIPE_HEIGHT_VARIATION + 100, passed: false, color: pipeColor },]);
+  const [pipes, setPipes] = useState<Pipe[]>([]); 
   const [isGameOver, setIsGameOver] = useState(false);
   const [score, setScore] = useState(0);
   const [finalScore, setFinalScore] = useState<number | null>(null);
@@ -175,6 +175,7 @@ const handleGameOver = useCallback(() => {
 
 
   const updateGame = useCallback(() => {
+    if (!gameStarted) return;
     setBird((prevBird) => {
       const newY = prevBird.y + prevBird.velocity;
       const newVelocity = prevBird.velocity + GRAVITY;
@@ -227,7 +228,7 @@ const handleGameOver = useCallback(() => {
 
       return updatedPipes;
     });
-  }, [bird, currentSpeed, handleGameOver, incrementScore,isGameOver, pipeColor]);
+  }, [bird, currentSpeed, handleGameOver, incrementScore,isGameOver, pipeColor, gameStarted]);
 
 
   useEffect(() => {
@@ -325,6 +326,9 @@ const handleGameOver = useCallback(() => {
   
 
   useEffect(() => {
+
+    if (!gameStarted) return;
+
     const generateCoin = () => {
       const canvas = canvasRef.current;
       if (!canvas) {
@@ -344,7 +348,7 @@ const handleGameOver = useCallback(() => {
     
     const interval = setInterval(generateCoin, 5000);
     return () => clearInterval(interval);
-  }, []);
+  }, [gameStarted]);
   
 
   useEffect(() => {
